@@ -4,7 +4,7 @@ public class Employee extends Customer {
 	
 	private int old;
 	private String address;
-	private boolean gender;
+	private int gender;
 	private String identityNumber;
 	private String password;
 	private int role;
@@ -13,7 +13,7 @@ public class Employee extends Customer {
 		super();
 	}
 	
-	public Employee(int id, String name, String phone,int old, String address, boolean gender, String identityNumber, String password, int role) {
+	public Employee(int id, String name, String phone,int old, String address, int gender, String identityNumber, String password, int role) {
 		super(id,name,phone);
 		this.old = old;
 		this.address = address;
@@ -39,11 +39,11 @@ public class Employee extends Customer {
 		this.address = address;
 	}
 
-	public boolean isGender() {
+	public int getGender() {
 		return gender;
 	}
 
-	public void setGender(boolean gender) {
+	public void setGender(int gender) {
 		this.gender = gender;
 	}
 

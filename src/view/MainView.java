@@ -3,13 +3,21 @@ package view;
 import java.awt.BorderLayout;
 import java.awt.EventQueue;
 
+import model.CategoryPanel;
+
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
+
+import controller.SlideController;
+
 import java.awt.Color;
 import javax.swing.JLabel;
 import javax.swing.SwingConstants;
 import java.awt.Font;
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.swing.ImageIcon;
 
 public class MainView extends JFrame {
@@ -179,5 +187,15 @@ public class MainView extends JFrame {
 		JPanel pnRoot = new JPanel();
 		pnRoot.setBounds(230, 66, 840, 441);
 		contentPane.add(pnRoot);
+		
+		
+		
+		
+		List<CategoryPanel> list = new ArrayList<>();
+		list.add(new CategoryPanel("Order",jlbOrder,panelOrder));
+		list.add(new CategoryPanel("Employee",jlbEmployee,panelEmployee));
+		SlideController sc = new SlideController(pnRoot);
+		sc.setView(panelOrder, jlbOrder);
+		sc.setEvent(list);
 	}
 }

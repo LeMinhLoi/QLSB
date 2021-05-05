@@ -10,6 +10,8 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import model.CategoryPanel;
+import view.JPanelEmployee;
+import view.JPanelOrder;
 
 public class SlideController {
 
@@ -27,20 +29,20 @@ public class SlideController {
 		jpn.setBackground(new Color(148,0,211));
 		root.removeAll();
 		root.setLayout(new BorderLayout());
-		root.add(new );
+		root.add(new JPanelOrder());
 		root.validate();
 		root.repaint();
 	}
 	public void setEvent(List<CategoryPanel> listItem) {
 		this.list = listItem;
 		for(CategoryPanel item : list) {
-			
+			item.getJlb().addMouseListener(new LabelEvent(item.getKind(), item.getJpn(), item.getJlb()));
 		}
 	}
 	class LabelEvent implements MouseListener{
+		
 		private JPanel node;
 	    private String kind;
-
 	    private JPanel jpnItem;
 	    private JLabel jlbItem;
 
@@ -54,12 +56,11 @@ public class SlideController {
 			// TODO Auto-generated method stub
 			switch (kind) {
             case "Order":
-                node = new ;
+                node = new JPanelEmployee();
                 break;
-            case "HoaDon":
-                node = new ;
-                break;
-            // more
+            case "Employee":
+            	node = new JPanelEmployee();
+            	break;
             default:
                 break;
 			}
