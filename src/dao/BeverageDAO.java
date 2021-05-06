@@ -106,6 +106,8 @@ public class BeverageDAO {
 		ResultSet rs = null;
 		if(ConnectDatabase.open()) {
         	try {
+        		ps = ConnectDatabase.cnn.prepareStatement("SET @@SESSION.information_schema_stats_expiry = 0 ");
+        		ps.executeQuery();
         		ps = ConnectDatabase.cnn.prepareStatement("select AUTO_INCREMENT FROM information_schema.tables WHERE table_name = 'beverage' AND table_schema = 'qlsb'");
         		rs = ps.executeQuery();
         		while(rs.next()) {
@@ -125,10 +127,10 @@ public class BeverageDAO {
 //		beverageDAO.insertBeverage(beverage);
 //		beverageDAO.updateBeverage(beverage);
 		//beverageDAO.deleteBeverage(1);
-//		List<Beverage> list = beverageDAO.getAllBeverage();
-//		for(Beverage item : list) {
-//			System.out.println(item.toString());
-//		}
+		List<Beverage> list = beverageDAO.getAllBeverage();
+		for(Beverage item : list) {
+			System.out.println(item.toString());
+		}
 		System.out.println(beverageDAO.nextId());;
 	}
 }

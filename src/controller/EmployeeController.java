@@ -16,7 +16,7 @@ public class EmployeeController {
 		showEmployee();
 	}
 	
-	private void showEmployee() {
+	public void showEmployee() {
 		Object[][] data = employeeService.showEmployees();
 		String col[] = {"STT","ID","Name","Old","Gender","Address","Phone","IdentityNumber","Password","Role"};
 		DefaultTableModel model = (DefaultTableModel) jpnEmployee.getTable().getModel();

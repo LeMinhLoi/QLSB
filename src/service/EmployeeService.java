@@ -40,6 +40,12 @@ public class EmployeeService {
 		}
 		return result;
 	}
+	public void deleteEmployee(int idEmmployee) {
+		employeeDAO.deleteEmployee(idEmmployee);
+	}
+	public int getNextIdEmployee() {
+		return employeeDAO.nextId();
+	}
 	public static void main(String[] args) {
 		
 	}

@@ -56,7 +56,7 @@ public class SlideController {
 			// TODO Auto-generated method stub
 			switch (kind) {
             case "Order":
-                node = new JPanelEmployee();
+                node = new JPanelOrder();
                 break;
             case "Employee":
             	node = new JPanelEmployee();

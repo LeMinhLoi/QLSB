@@ -19,6 +19,17 @@ public class EmployeeDAO {
 		return null;
 	}
 	public static void deleteEmployee(int idEmployee) {
+		PreparedStatement ps = null;
+		try {
+            if (ConnectDatabase.open()) {
+                ps = ConnectDatabase.cnn.prepareStatement("delete from employee where idEmployee = ?");
+                ps.setString(1, String.valueOf(idEmployee));
+                ps.executeUpdate();
+                ConnectDatabase.close();
+            }
+        } catch (SQLException e) {
+            System.out.println("Delete employee fail!");
+        }
 	}
 	public static List<Employee> getAllEmployees(){
 		Employee employee = null;
@@ -43,10 +54,33 @@ public class EmployeeDAO {
 		return list;
 	}
 	public static int nextId() {
-		return 0;
+		int value = -1;
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+		if(ConnectDatabase.open()) {
+        	try {
+        		ps = ConnectDatabase.cnn.prepareStatement("SET @@SESSION.information_schema_stats_expiry = 0 ");
+        		ps.executeQuery();
+        		ps = ConnectDatabase.cnn.prepareStatement("select AUTO_INCREMENT FROM information_schema.tables WHERE table_name = 'employee' AND table_schema = 'qlsb'");
+        		rs = ps.executeQuery();
+        		while(rs.next()) {
+        			value = rs.getInt(1);
+        		}
+        	}catch (SQLException ex) {
+        		System.out.println("Get beverage fail!");
+            } finally {
+            	ConnectDatabase.close(ps, rs);
+            }
+        }
+		return value;
 	}
 	public static List<Employee> search(String name){
 		List<Employee> list = null;
 		return list;
+	}
+	public static void main(String[] args) {
+		EmployeeDAO eD  = new EmployeeDAO();
+		int i = eD.nextId();
+		System.out.println(i);
 	}
 }

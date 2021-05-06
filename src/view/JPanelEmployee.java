@@ -14,24 +14,31 @@ import controller.EmployeeController;
 import service.EmployeeService;
 
 import javax.swing.JTable;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
 
 public class JPanelEmployee extends JPanel {
 	private JTextField textField;
 	private JTable jtbEmployee;
 	private EmployeeService employeeService;
+	private EmployeeController ec;
+	private JScrollPane scrollPane;
 	/**
 	 * Create the panel.
 	 */
 	public JPanelEmployee() {
 		setLayout(null);
 		
-		JScrollPane scrollPane = new JScrollPane();
+		
+		
+		scrollPane = new JScrollPane();
 		scrollPane.setBounds(220, 73, 610, 357);
 		add(scrollPane);
 		
 		jtbEmployee = new JTable();
 		scrollPane.setViewportView(jtbEmployee);
 		
+
 		JPanel panel = new JPanel();
 		panel.setBounds(0, 0, 203, 430);
 		add(panel);
@@ -80,7 +87,31 @@ public class JPanelEmployee extends JPanel {
 		add(jlbSearch);
 
 		employeeService = new EmployeeService();
-		EmployeeController ec = new EmployeeController(this, employeeService);
+		ec = new EmployeeController(this, employeeService);
+		
+		ButtonListener buttonListener = new ButtonListener();
+		btnDelete.addActionListener(buttonListener);
+		btnAdd.addActionListener(buttonListener);
+	}
+	private class ButtonListener implements ActionListener{
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			// TODO Auto-generated method stub
+			if(e.getActionCommand().equals("Xoá")) {//nếu nhấn vào nút xoá thì ...
+				int rowIndex = Integer.parseInt(jtbEmployee.getModel().getValueAt(jtbEmployee.getSelectedRow(),1).toString());
+				employeeService.deleteEmployee(rowIndex);
+				ec.showEmployee();
+			}else if(e.getActionCommand().equals("Thêm")) {
+				int nextID = employeeService.getNextIdEmployee();
+				JFrameAddvsEditEmployee addvsEditEmployee = new JFrameAddvsEditEmployee(nextID);
+				addvsEditEmployee.setVisible(true);
+			}else if(e.getActionCommand().equals("Sửa")) {
+				
+			}
+
+		}
+		
 	}
 	public JTable getTable() {
 		return jtbEmployee;
