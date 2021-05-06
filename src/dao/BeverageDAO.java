@@ -8,6 +8,8 @@ import java.util.List;
 
 import connect.ConnectDatabase;
 import model.Beverage;
+import model.Price;
+import model.Time;
 
 public class BeverageDAO {
 	public static Beverage insertBeverage(Beverage beverage) {
@@ -120,8 +122,11 @@ public class BeverageDAO {
 		return value;
 	}
 	public static void main(String[] args) {
-		//Beverage beverage = new Beverage(1,"Loi","c",123,124,10);
-		BeverageDAO beverageDAO = new BeverageDAO();
+		/*Beverage beverage = new Beverage(1,"Loi","c",123,124,10);
+		//BeverageDAO beverageDAO = new BeverageDAO();
+		Price price = new Price (1, 1, 1, 300);
+		PriceDAO pricedao = new PriceDAO();
+		PriceDAO.updatePrice(price);
 //		beverageDAO.insertBeverage(beverage);
 //		beverageDAO.updateBeverage(beverage);
 		//beverageDAO.deleteBeverage(1);
@@ -129,6 +134,18 @@ public class BeverageDAO {
 //		for(Beverage item : list) {
 //			System.out.println(item.toString());
 //		}
-		System.out.println(beverageDAO.nextId());;
+		List<Price> list = pricedao.getAllPrice();
+		for(Price item : list) {
+			System.out.print(item.toString());
+		}
+		System.out.println(pricedao);*/
+		Time time = new Time(1, "Gio 1");
+		TimeDAO timeDAO = new TimeDAO();
+		TimeDAO.updateTime(time);
+		List<Time> list = timeDAO.getAllTime();
+		for (Time item : list) {
+			System.out.print(item.toString());
+		}
+		System.out.println(timeDAO);
 	}
 }

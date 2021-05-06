@@ -10,10 +10,10 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class ConnectDatabase {
-	public static String driver = "com.mysql.jdbc.Driver";
+	public static String driver = "com.mysql.cj.jdbc.Driver";
     public static String url = "jdbc:mysql://localhost:3306/qlsb";
     public static String user = "root";
-    public static String pass = "789456123";
+    public static String pass = "Tranthithao@7420";
     
     public static Connection cnn;
      
