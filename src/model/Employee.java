@@ -13,7 +13,7 @@ public class Employee extends Customer {
 		super();
 	}
 	
-	public Employee(int id, String name, String phone,int old, String address, int gender, String identityNumber, String password, int role) {
+	public Employee(int id, String name,int old,  String address, int gender, String phone, String identityNumber, String password, int role) {
 		super(id,name,phone);
 		this.old = old;
 		this.address = address;

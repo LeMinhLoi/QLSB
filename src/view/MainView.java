@@ -71,7 +71,7 @@ public class MainView extends JFrame {
 		panelOrder.add(jlbOrder);
 		
 		JLabel jlbIconOrder = new JLabel("New label");
-		jlbIconOrder.setIcon(new ImageIcon("C:\\Users\\loile\\eclipse-workspace\\PBL3\\images\\icon-order.png"));
+		jlbIconOrder.setIcon(new ImageIcon("C:\\Users\\lenth\\eclipse-workspace\\QLSB\\images\\icon-order.png"));
 		jlbIconOrder.setBounds(0, 0, 51, 51);
 		panelOrder.add(jlbIconOrder);
 		
@@ -89,7 +89,7 @@ public class MainView extends JFrame {
 		panelBill.add(jlbBill);
 		
 		JLabel jlbIconBill = new JLabel("New label");
-		jlbIconBill.setIcon(new ImageIcon("C:\\Users\\loile\\eclipse-workspace\\PBL3\\images\\icon-bill.png"));
+		jlbIconBill.setIcon(new ImageIcon("C:\\Users\\lenth\\eclipse-workspace\\QLSB\\images\\icon-bill.png"));
 		jlbIconBill.setBounds(0, 0, 51, 51);
 		panelBill.add(jlbIconBill);
 		
@@ -107,7 +107,7 @@ public class MainView extends JFrame {
 		panelBeverage.add(jlbBeverage);
 		
 		JLabel jlbIconBeverage = new JLabel("New label");
-		jlbIconBeverage.setIcon(new ImageIcon("C:\\Users\\loile\\eclipse-workspace\\PBL3\\images\\icon-beverage.png"));
+		jlbIconBeverage.setIcon(new ImageIcon("C:\\Users\\lenth\\eclipse-workspace\\QLSB\\images\\icon-beverage.png"));
 		jlbIconBeverage.setBounds(0, 0, 51, 51);
 		panelBeverage.add(jlbIconBeverage);
 		
@@ -125,7 +125,7 @@ public class MainView extends JFrame {
 		panelCustomer.add(jlbCustomer);
 		
 		JLabel jlbIconCustomer = new JLabel("New label");
-		jlbIconCustomer.setIcon(new ImageIcon("C:\\Users\\loile\\eclipse-workspace\\PBL3\\images\\icon-customer.png"));
+		jlbIconCustomer.setIcon(new ImageIcon("C:\\Users\\lenth\\eclipse-workspace\\QLSB\\images\\icon-customer.png"));
 		jlbIconCustomer.setBounds(0, 0, 51, 51);
 		panelCustomer.add(jlbIconCustomer);
 		
@@ -143,7 +143,7 @@ public class MainView extends JFrame {
 		panelEmployee.add(jlbEmployee);
 		
 		JLabel jlbIconEmployee = new JLabel("New label");
-		jlbIconEmployee.setIcon(new ImageIcon("C:\\Users\\loile\\eclipse-workspace\\PBL3\\images\\icon-nhan-vien.png"));
+		jlbIconEmployee.setIcon(new ImageIcon("C:\\Users\\lenth\\eclipse-workspace\\QLSB\\images\\icon-nhan-vien.png"));
 		jlbIconEmployee.setBounds(0, 0, 51, 51);
 		panelEmployee.add(jlbIconEmployee);
 		
@@ -161,7 +161,7 @@ public class MainView extends JFrame {
 		panelYard.add(jlbYard);
 		
 		JLabel JlbIconYard = new JLabel("New label");
-		JlbIconYard.setIcon(new ImageIcon("C:\\Users\\loile\\eclipse-workspace\\PBL3\\images\\icon-yard.jpg"));
+		JlbIconYard.setIcon(new ImageIcon("C:\\Users\\lenth\\eclipse-workspace\\QLSB\\images\\icon-yard.jpg"));
 		JlbIconYard.setBounds(0, 0, 51, 51);
 		panelYard.add(JlbIconYard);
 		
