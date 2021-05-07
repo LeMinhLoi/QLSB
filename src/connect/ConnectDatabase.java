@@ -11,11 +11,11 @@ import java.util.logging.Logger;
 
 public class ConnectDatabase {
 	public static String driver = "com.mysql.cj.jdbc.Driver";
-    public static String url = "jdbc:mysql://localhost:3306/qlsv?verifyServerCertificate=false&useSSL=true";
+    public static String url = "jdbc:mysql://localhost:3306/qlsb?verifyServerCertificate=false&useSSL=true";
     public static String user = "root";
     public static String pass = "132671";
     
-    public static Connection cnn;
+    public static Connection cnn;//địt mẹ mày???????? :D ???????? ãyem t fix nèok tok aok ofix đi
      
     public static boolean open() {
         try {

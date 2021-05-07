@@ -8,8 +8,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import connect.ConnectDatabase;
+import model.BeverageBill;
 import model.Beverage;
-import model.Order;
+import model.Order; 
 
 public class OrderDAO {
 	
@@ -58,13 +59,13 @@ public class OrderDAO {
         ResultSet rs = null;
 		if(ConnectDatabase.open()) {
         	try {
-        		ps = ConnectDatabase.cnn.prepareStatement("select * from order");
+        		ps = ConnectDatabase.cnn.prepareStatement("select * from ordered");
         		rs = ps.executeQuery();
         		list = new ArrayList<Order>();
         		while(rs.next()) {
-        			if(rs.getDate(4) == date && rs.getInt(2) == idTime)
         			order = new Order(rs.getInt(1),rs.getInt(2),rs.getInt(3),rs.getDate(4),rs.getInt(5));
-        			list.add(order);
+        			if(order.getDate().compareTo(date) == 0 && order.getIdCateYard_Time() == idTime)
+        				list.add(order);
         		}
         	}catch (SQLException ex) {
         		System.out.println("Get order fail!");
@@ -74,4 +75,17 @@ public class OrderDAO {
         }
 		return list;
 	}
+	public static void main(String[] args) {
+		Order Order = new Order(5,1, 3,Date.valueOf("2019-07-13"),1);
+		OrderDAO OrderDAO1 = new OrderDAO();
+		//OrderDAO.insertOrder(Order);
+		//OrderDAO1.deleteOrder(5);
+		List<Order> list = OrderDAO1.getOrderByDateTime(Date.valueOf("2019-07-13"), 2);
+//		OrderDAO.updateOrder(Order);
+		//OrderDAO.deleteOrder(1);
+//		List<Order> list = OrderDAO.getAllOrder();
+		for(Order item : list) 
+		System.out.println(item.toString());
+	}
+
 }

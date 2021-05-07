@@ -52,5 +52,9 @@ public class Order {
 		this.idCustomer = idCustomer;
 	}
 	
-	
+	@Override
+	public String toString()
+	{
+		return "ID Order: " + this.idOrder + " ID Time: " + this.idCateYard_Time;
+	}
 }

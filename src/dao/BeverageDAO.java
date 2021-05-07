@@ -120,9 +120,9 @@ public class BeverageDAO {
 		return value;
 	}
 	public static void main(String[] args) {
-		//Beverage beverage = new Beverage(555,"Loi",123,124,"c",10);
+//		Beverage beverage = new Beverage(555,"Loi",123,124,"c",10);
 		BeverageDAO beverageDAO = new BeverageDAO();
-		//beverageDAO.insertBeverage(beverage);
+//		beverageDAO.insertBeverage(beverage);
 //		beverageDAO.updateBeverage(beverage);
 		//beverageDAO.deleteBeverage(1);
 		List<Beverage> list = beverageDAO.getAllBeverage();
