@@ -8,6 +8,7 @@ import java.util.List;
 
 import connect.ConnectDatabase;
 import model.Beverage;
+import model.CateYard;
 import model.Price;
 import model.Time;
 
@@ -139,13 +140,13 @@ public class BeverageDAO {
 			System.out.print(item.toString());
 		}
 		System.out.println(pricedao);*/
-		Time time = new Time(1, "Gio 1");
-		TimeDAO timeDAO = new TimeDAO();
-		TimeDAO.updateTime(time);
-		List<Time> list = timeDAO.getAllTime();
-		for (Time item : list) {
+		CateYard cateyard = new CateYard(1, "San 8");
+		CateYardDAO cateYardDAO = new CateYardDAO();
+		CateYardDAO.updateCateYard(cateyard);
+		List<CateYard> list = cateYardDAO.getAllCateYard();
+		for (CateYard item : list) {
 			System.out.print(item.toString());
 		}
-		System.out.println(timeDAO);
+		System.out.println(cateYardDAO);
 	}
 }
