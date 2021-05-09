@@ -55,9 +55,9 @@ public class BeverageBillDAO {
 	}
 	
 	public static void main(String[] args) {
-		BeverageBill beverage = new BeverageBill(5,12,100);
+		BeverageBill beverage = new BeverageBill(1,12,100);
 		BeverageBillDAO beverageBillDAO = new BeverageBillDAO();
-		//beverageBillDAO.insertBeverageBill(beverage);
+		beverageBillDAO.insertBeverageBill(beverage);
 		//beverageBillDAO.updateBeverageBill(beverage);
 //		beverageDAO.updateBeverage(beverage);
 		//beverageDAO.deleteBeverage(1);
