@@ -6,18 +6,28 @@ import java.awt.EventQueue;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
+import javax.swing.table.DefaultTableModel;
 
+//import controller.EmployeeController;
 import model.Employee;
+import service.EmployeeService;
 
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
 import javax.swing.JRadioButton;
 import javax.swing.JButton;
+import javax.swing.JDialog;
 
 public class JFrameAddvsEditEmployee extends JFrame {
-
+	private EmployeeService employeeService;
+	private JPanelEmployee jpnEmployee;
+	
 	private JPanel contentPane;
 	private JTextField tfID;
 	private JTextField tfName;
@@ -29,6 +39,9 @@ public class JFrameAddvsEditEmployee extends JFrame {
 	private JRadioButton rdNu;
 	private JRadioButton rdAdmin;
 	private JRadioButton rdNhanvien;
+	private JTextField tfIdentity;
+	private JButton btnOk;
+	private JButton btnCancel;
 	/**
 	 * Launch the application.
 	 */
@@ -36,7 +49,7 @@ public class JFrameAddvsEditEmployee extends JFrame {
 //		EventQueue.invokeLater(new Runnable() {
 //			public void run() {
 //				try {
-//					JFrameAddvsEditEmployee frame = new JFrameAddvsEditEmployee();
+//					JFrameAddvsEditEmployee frame = new JFrameAddvsEditEmployee(1);
 //					frame.setVisible(true);
 //				} catch (Exception e) {
 //					e.printStackTrace();
@@ -48,7 +61,7 @@ public class JFrameAddvsEditEmployee extends JFrame {
 	/**
 	 * Create the frame.
 	 */
-	public JFrameAddvsEditEmployee(Employee employee) {
+	public JFrameAddvsEditEmployee(Employee employee, JPanelEmployee jpnEmployee) {
 		initComponents();
 		tfID.setText(String.valueOf(employee.getIdCustomer()));
 		tfAddress.setText(employee.getAddress());
@@ -56,14 +69,26 @@ public class JFrameAddvsEditEmployee extends JFrame {
 		tfOld.setText(String.valueOf(employee.getOld()));
 		tfPass.setText(employee.getPassword());
 		tfPhone.setText(employee.getPhoneCustomer());
+		
+		this.jpnEmployee = jpnEmployee;
+		
+		ButtonListener buttonListener = new ButtonListener();
+		btnOk.addActionListener(buttonListener);
+		btnCancel.addActionListener(buttonListener);
 	}
-	public JFrameAddvsEditEmployee(int idEmployee) {
+	public JFrameAddvsEditEmployee(int idEmployee, JPanelEmployee jpnEmployee) {
 		initComponents();
 		tfID.setText(String.valueOf(idEmployee));
+		
+		this.jpnEmployee = jpnEmployee;
+		
+		ButtonListener buttonListener = new ButtonListener();
+		btnOk.addActionListener(buttonListener);
+		btnCancel.addActionListener(buttonListener);
 	}
 	private void initComponents() {
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 582, 393);
+		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		setBounds(100, 100, 599, 393);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
@@ -126,8 +151,9 @@ public class JFrameAddvsEditEmployee extends JFrame {
 		tfPhone.setColumns(10);
 		
 		JLabel jlbPass = new JLabel("Password");
+		jlbPass.setHorizontalAlignment(SwingConstants.CENTER);
 		jlbPass.setFont(new Font("Tahoma", Font.BOLD, 14));
-		jlbPass.setBounds(301, 116, 78, 14);
+		jlbPass.setBounds(301, 166, 121, 14);
 		contentPane.add(jlbPass);
 		
 		rdNam = new JRadioButton("Nam");
@@ -142,60 +168,97 @@ public class JFrameAddvsEditEmployee extends JFrame {
 		
 		rdAdmin = new JRadioButton("Admin");
 		rdAdmin.setFont(new Font("Tahoma", Font.BOLD, 14));
-		rdAdmin.setBounds(301, 59, 78, 23);
+		rdAdmin.setBounds(301, 110, 78, 23);
 		contentPane.add(rdAdmin);
 		
 		rdNhanvien = new JRadioButton("Nh\u00E2n vi\u00EAn");
 		rdNhanvien.setFont(new Font("Tahoma", Font.BOLD, 14));
-		rdNhanvien.setBounds(381, 59, 95, 23);
+		rdNhanvien.setBounds(381, 110, 95, 23);
 		contentPane.add(rdNhanvien);
 		
 		tfPass = new JTextField();
-		tfPass.setBounds(389, 113, 118, 20);
+		tfPass.setBounds(432, 165, 134, 20);
 		contentPane.add(tfPass);
 		tfPass.setColumns(10);
 		
-		JButton btnOk = new JButton("OK");
+		btnOk = new JButton("OK");
 		btnOk.setBounds(172, 290, 89, 23);
 		contentPane.add(btnOk);
 		
-		JButton btnCancel = new JButton("Cancel");
+		btnCancel = new JButton("Cancel");
 		btnCancel.setBounds(301, 290, 89, 23);
 		contentPane.add(btnCancel);
+		
+		JLabel jlbIdentity = new JLabel("Identity Number");
+		jlbIdentity.setFont(new Font("Tahoma", Font.BOLD, 14));
+		jlbIdentity.setBounds(301, 63, 134, 14);
+		contentPane.add(jlbIdentity);
+		
+		tfIdentity = new JTextField();
+		tfIdentity.setBounds(432, 60, 134, 20);
+		contentPane.add(tfIdentity);
+		tfIdentity.setColumns(10);
+		
+		
 	}
-	
-	public JPanel getContentPane() {
-		return contentPane;
+	public void closeFrame() {//dùng để đóng frame
+		this.dispose();
 	}
-	public JTextField getTfID() {
-		return tfID;
+	public JFrameAddvsEditEmployee get() {
+		return this;
 	}
-	public JTextField getTfName() {
-		return tfName;
-	}
-	public JTextField getTfOld() {
-		return tfOld;
-	}
-	public JTextField getTfAddress() {
-		return tfAddress;
-	}
-	public JTextField getTfPhone() {
-		return tfPhone;
-	}
-	public JTextField getTfPass() {
-		return tfPass;
-	}
-	public JRadioButton getRdNam() {
-		return rdNam;
-	}
-	public JRadioButton getRdNu() {
-		return rdNu;
-	}
-	public JRadioButton getRdAdmin() {
-		return rdAdmin;
-	}
-	public JRadioButton getRdNhanvien() {
-		return rdNhanvien;
+	private class ButtonListener implements ActionListener{
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			employeeService = new EmployeeService();
+			// TODO Auto-generated method stub
+			if(e.getActionCommand().equals("OK")) {//nếu nhấn vào nút okay thì ...
+				if(employeeService.checkID(Integer.parseInt(tfID.getText())) != null) {//kiểm tra xem có mã tồn tại chưa, nếu có thì thực hiện update
+					Employee employee = new Employee();
+					employee.setIdCustomer(Integer.parseInt(tfID.getText()));
+					employee.setNameCustomer(tfName.getText());
+					employee.setAddress(tfAddress.getText());
+					employee.setOld(Integer.parseInt(tfOld.getText()));
+					employee.setIdentityNumber(tfIdentity.getText());
+					employee.setPassword(tfPass.getText());
+					employee.setPhoneCustomer(tfPhone.getText());
+					if(rdNam.isSelected() == true) employee.setGender(1);
+					else employee.setGender(0);
+					if(rdAdmin.isSelected() == true) employee.setRole(1);
+					else employee.setGender(0);
+					if(employeeService.updateEmployee(employee) != null) {
+						JOptionPane.showMessageDialog(get(), "Update successfully!","Alert",JOptionPane.CLOSED_OPTION);
+						jpnEmployee.showEmployee();
+					}else {
+						System.out.println("Update fail!");
+					}
+				}else {//nếu mã chưa tồn tại thì tức là thêm
+					Employee employee = new Employee();
+					employee.setIdCustomer(Integer.parseInt(tfID.getText()));
+					employee.setNameCustomer(tfName.getText());
+					employee.setAddress(tfAddress.getText());
+					employee.setOld(Integer.parseInt(tfOld.getText()));
+					employee.setIdentityNumber(tfIdentity.getText());
+					employee.setPassword(tfPass.getText());
+					employee.setPhoneCustomer(tfPhone.getText());
+					if(rdNam.isSelected() == true) employee.setGender(1);
+					else employee.setGender(0);
+					if(rdAdmin.isSelected() == true) employee.setRole(1);
+					else employee.setGender(0);
+					if(employeeService.insertEmployee(employee) != null) {
+						JOptionPane.showMessageDialog(get(), "Insert successfully!","Alert",JOptionPane.CLOSED_OPTION);
+						jpnEmployee.showEmployee();
+					}else {
+						System.out.println("Insert fail!");
+					}
+				}
+				closeFrame();//xong thì đóng, để làm gì :v
+			}else if(e.getActionCommand().equals("Cancel")) {//nếu bấm vào nút huỷ
+				closeFrame();
+			}
+		}
+		
 	}
 	
 }

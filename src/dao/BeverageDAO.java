@@ -10,6 +10,10 @@ import connect.ConnectDatabase;
 import model.Beverage;
 
 public class BeverageDAO {
+	
+	public BeverageDAO() {
+		
+	}
 	public static Beverage insertBeverage(Beverage beverage) {
 		PreparedStatement ps = null;
 		if (ConnectDatabase.open()) {

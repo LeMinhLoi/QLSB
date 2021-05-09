@@ -7,16 +7,73 @@ import java.util.ArrayList;
 import java.util.List;
 
 import connect.ConnectDatabase;
-import model.Beverage;
 import model.Employee;
 
 public class EmployeeDAO {
 	
 	public static Employee insertEmployee(Employee employee) {
-		return null;
+		PreparedStatement ps = null;
+		if (ConnectDatabase.open()) {
+            try {
+                ps = ConnectDatabase.cnn.prepareStatement("insert into employee values (?,?,?,?,?,?,?,?,?)");
+                ps.setString(1, String.valueOf(employee.getIdCustomer()));
+                ps.setString(2, employee.getNameCustomer());
+                ps.setString(3, String.valueOf(employee.getOld()));
+                ps.setString(4, employee.getAddress());
+                ps.setString(5, String.valueOf(employee.getGender()));
+                ps.setString(6, employee.getPhoneCustomer());
+                ps.setString(7, employee.getIdentityNumber());
+                ps.setString(8, String.valueOf(employee.getPassword()));
+                ps.setString(9, String.valueOf(employee.getRole()));
+                int row = ps.executeUpdate();
+                if (row < 1) {
+                    employee = null;
+                }
+            } catch (SQLException ex) {
+                System.out.println("Insert beverage fail!");
+                employee = null;
+            } finally {
+            	ConnectDatabase.close(ps);
+            }
+        }
+        return employee;
 	}
 	public static Employee updateEmployee(Employee employee) {
-		return null;
+		PreparedStatement ps = null;
+		if (ConnectDatabase.open()) {
+            try {
+                ps = ConnectDatabase.cnn.prepareStatement("update employee "
+                		+ "set name = ?,"
+                		+ "old = ?,"
+                		+ "address = ?,"
+                		+ "gender = ?,"
+                		+ "phone = ?,"
+                		+ "identity_Number = ?,"
+                		+ "password = ?,"
+                		+ "role = ?"
+                		+ "where idEmployee = ? ");
+                
+                ps.setString(1, employee.getNameCustomer());
+                ps.setString(2, String.valueOf(employee.getOld()));
+                ps.setString(3, employee.getAddress());
+                ps.setString(4, String.valueOf(employee.getGender()));
+                ps.setString(5, employee.getPhoneCustomer());
+                ps.setString(7, employee.getPassword());
+                ps.setString(8, String.valueOf(employee.getRole()));
+                ps.setString(9, String.valueOf(employee.getIdCustomer()));
+                ps.setString(6, employee.getIdentityNumber());
+                int row = ps.executeUpdate();
+                if (row < 1) {
+                    employee = null;
+                }
+            } catch (SQLException ex) {
+                System.out.println("Update enployee fail!" + ex.toString());
+                employee = null;
+            } finally {
+            	ConnectDatabase.close(ps);
+            }
+        }
+        return employee;
 	}
 	public static void deleteEmployee(int idEmployee) {
 		PreparedStatement ps = null;
