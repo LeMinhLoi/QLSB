@@ -15,7 +15,7 @@ public class ConnectDatabase {
     public static String user = "root";
     public static String pass = "132671";
     
-    public static Connection cnn;//địt mẹ mày???????? :D ???????? ãyem t fix nèok tok aok ofix đi
+    public static Connection cnn;
      
     public static boolean open() {
         try {

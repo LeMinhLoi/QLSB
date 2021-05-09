@@ -36,7 +36,7 @@ public class BeverageBillDAO {
                 ps = ConnectDatabase.cnn.prepareStatement("update beverage_bill "
                 		+ "set idBeverage = ?,"
                 		+ "mount = ?"
-                		+ "where idBeverage = ? ");
+                		+ "where id_beverage_Bill = ? ");
                 ps.setString(1, String.valueOf(beverageBill.getIdBeve()));
                 ps.setString(2, String.valueOf(beverageBill.getMountBeve()));
                 ps.setString(3, String.valueOf(beverageBill.getIdBeveBill()));

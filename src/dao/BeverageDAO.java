@@ -129,6 +129,6 @@ public class BeverageDAO {
 		for(Beverage item : list) {
 			System.out.println(item.toString());
 		}
-		//System.out.println(beverageDAO.nextId());;
+		System.out.println(beverageDAO.nextId());
 	}
 }
