@@ -9,9 +9,10 @@ import java.util.List;
 import connect.ConnectDatabase;
 import model.Beverage;
 import model.Customer;
+import model.Employee;
 
 public class CustomerDAO {
-	
+
 	public static Customer insertCustomer(Customer customer) {
 		PreparedStatement ps = null;
 		if (ConnectDatabase.open()) {
@@ -41,7 +42,7 @@ public class CustomerDAO {
                 		+ "set namecustomer = ?,"
                 		+ "phone = ?"
                 		+ "where idCustomer = ? ");
-                
+
                 ps.setString(1, customer.getNameCustomer());
                 ps.setString(2, customer.getPhoneCustomer());
                 ps.setString(3, String.valueOf(customer.getIdCustomer()));
@@ -58,6 +59,7 @@ public class CustomerDAO {
         }
         return customer;
 	}
+
 	public static void deleteCustomer(int idCustomer) {
 		PreparedStatement ps = null;
 		try {
@@ -108,6 +110,28 @@ public class CustomerDAO {
         	}catch (SQLException ex) {
         		System.out.println("Get customer by phone fail!");
         		ex.printStackTrace();
+            } finally {
+            	ConnectDatabase.close(ps, rs);
+            }
+        }
+		return list;
+	}
+	public static List<Customer> getAllCustomers(){
+		Customer customer = null;
+		List<Customer> list = null;
+		PreparedStatement ps = null;
+        ResultSet rs = null;
+        if(ConnectDatabase.open()) {
+        	try {
+        		ps = ConnectDatabase.cnn.prepareStatement("select * from customer");
+        		rs = ps.executeQuery();
+        		list = new ArrayList<Customer>();
+        		while(rs.next()) {
+        			customer = new Customer(rs.getInt(1),rs.getString(2),rs.getString(3));
+        			list.add(customer);
+        		}
+        	}catch (SQLException ex) {
+        		System.out.println("Get customer fail!");
             } finally {
             	ConnectDatabase.close(ps, rs);
             }

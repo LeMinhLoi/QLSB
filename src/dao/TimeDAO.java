@@ -51,6 +51,7 @@ public class TimeDAO {
         		}
         	}catch (SQLException ex) {
         		System.out.println("Get time fail!");
+        		ex.printStackTrace();
             } finally {
             	ConnectDatabase.close(ps, rs);
             }

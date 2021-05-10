@@ -1,2 +1,6 @@
 eclipse.preferences.version=1
 encoding//src/service/EmployeeService.java=UTF-8
+encoding//src/view/JFrameAddvsEditCustomer.java=UTF-8
+encoding//src/view/JFrameAddvsEditEmployee.java=UTF-8
+encoding//src/view/JPanelCustomer.java=UTF-8
+encoding//src/view/JPanelEmployee.java=UTF-8

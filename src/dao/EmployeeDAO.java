@@ -25,14 +25,21 @@ public class EmployeeDAO {
                 ps.setString(5, String.valueOf(employee.getGender()));
                 ps.setString(6, employee.getPhoneCustomer());
                 ps.setString(7, employee.getIdentityNumber());
+
                 ps.setString(8, employee.getPassword());
+
+                ps.setString(8, String.valueOf(employee.getPassword()));
+
                 ps.setString(9, String.valueOf(employee.getRole()));
                 int row = ps.executeUpdate();
                 if (row < 1) {
                     employee = null;
                 }
             } catch (SQLException ex) {
-                System.out.println("Insert employee fail!");
+
+
+                System.out.println("Insert beverage fail!");
+
                 employee = null;
             } finally {
             	ConnectDatabase.close(ps);
@@ -52,7 +59,9 @@ public class EmployeeDAO {
                 		+ "phone = ?,"
                 		+ "identity_Number = ?,"
                 		+ "password = ?,"
+
                 		+ "role = ?"            		
+
                 		+ "where idEmployee = ? ");
                 
                 ps.setString(1, employee.getNameCustomer());
@@ -60,16 +69,23 @@ public class EmployeeDAO {
                 ps.setString(3, employee.getAddress());
                 ps.setString(4, String.valueOf(employee.getGender()));
                 ps.setString(5, employee.getPhoneCustomer());
+
                 ps.setString(6, employee.getIdentityNumber());
                 ps.setString(7, employee.getPassword());
                 ps.setString(8, String.valueOf(employee.getRole()));
                 ps.setString(9, String.valueOf(employee.getIdCustomer()));
+
+               
+
                 int row = ps.executeUpdate();
                 if (row < 1) {
                     employee = null;
                 }
             } catch (SQLException ex) {
+
                 System.out.println("Update employee fail!" + ex.toString());
+
+
                 employee = null;
             } finally {
             	ConnectDatabase.close(ps);
@@ -80,6 +96,7 @@ public class EmployeeDAO {
 	public static void deleteEmployee(int idEmployee) {
 		PreparedStatement ps = null;
 		try {
+
 			if(ConnectDatabase.open()) {
 				ps = ConnectDatabase.cnn.prepareStatement("delete from employee where idEmployee = ?");
 				ps.setString(1, String.valueOf(idEmployee));
@@ -89,7 +106,7 @@ public class EmployeeDAO {
 		}catch(SQLException e) {
 			System.out.println("Delete fail!"+ e.toString());
 		}
-	}
+    }
 	public static List<Employee> getAllEmployees(){
 		Employee employee = null;
 		List<Employee> list = null;
@@ -118,13 +135,22 @@ public class EmployeeDAO {
 		ResultSet rs = null;
 		if(ConnectDatabase.open()) {
         	try {
+
+
+        		ps = ConnectDatabase.cnn.prepareStatement("SET @@SESSION.information_schema_stats_expiry = 0 ");
+        		ps.executeQuery();
+
         		ps = ConnectDatabase.cnn.prepareStatement("select AUTO_INCREMENT FROM information_schema.tables WHERE table_name = 'employee' AND table_schema = 'qlsb'");
         		rs = ps.executeQuery();
         		while(rs.next()) {
         			value = rs.getInt(1);
         		}
         	}catch (SQLException ex) {
+
         		System.out.println("Get employee fail!");
+
+        		System.out.println("Get beverage fail!");
+
             } finally {
             	ConnectDatabase.close(ps, rs);
             }
@@ -156,6 +182,7 @@ public class EmployeeDAO {
 		return list;
 	}
 	public static void main(String[] args) {
+
 		//Employee employee = new Employee(2,"Loi", 19, "Hue", 1,"0336364692", "191996538", "10022001", 1);
 		//Employee employee = new Employee(1,"Duong", 20, "Hue", 1,"0336364692", "191996538", "10022001", 1);
 		//EmployeeDAO.deleteEmployee(2);
@@ -165,6 +192,10 @@ public class EmployeeDAO {
 		{
 			System.out.println(i.toString());
 		}
-		
+
+		EmployeeDAO eD  = new EmployeeDAO();
+		int i = eD.nextId();
+		System.out.println(i);
+
 	}
 }
