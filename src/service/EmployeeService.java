@@ -7,7 +7,6 @@ import model.Employee;
 
 public class EmployeeService {
 	
-	private static Employee employee = null;
 	private EmployeeDAO employeeDAO;
 	private List<Employee> listEmployee;
 	

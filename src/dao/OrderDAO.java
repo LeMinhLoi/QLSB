@@ -1,10 +1,12 @@
 package dao;
 
-import java.sql.Date;
+
+
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import connect.ConnectDatabase;
@@ -62,8 +64,10 @@ public class OrderDAO {
         		list = new ArrayList<Order>();
         		while(rs.next()) {
         			order = new Order(rs.getInt(1),rs.getInt(2),rs.getInt(3),rs.getDate(4),rs.getInt(5));
-        			if(order.getDate().compareTo(date) == 0 && order.getIdCateYard_Time() == idTime)
+        			if(order.getDate().compareTo(date) == 0 && order.getIdCateYard_Time() == idTime) {
         				list.add(order);
+        			}
+        				
         		}
         	}catch (SQLException ex) {
         		System.out.println("Get order fail!");
@@ -74,16 +78,7 @@ public class OrderDAO {
 		return list;
 	}
 	public static void main(String[] args) {
-		Order Order = new Order(5,1, 3,Date.valueOf("2019-07-13"),1);
-		OrderDAO OrderDAO1 = new OrderDAO();
-		//OrderDAO.insertOrder(Order);
-		//OrderDAO1.deleteOrder(5);
-		List<Order> list = OrderDAO1.getOrderByDateTime(Date.valueOf("2019-07-13"), 2);
-//		OrderDAO.updateOrder(Order);
-		//OrderDAO.deleteOrder(1);
-//		List<Order> list = OrderDAO.getAllOrder();
-		for(Order item : list) 
-		System.out.println(item.toString());
+		
 	}
 
 }

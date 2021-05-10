@@ -10,6 +10,8 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import model.CategoryPanel;
+import view.JPanelBeverage;
+import view.JPanelCustomer;
 import view.JPanelEmployee;
 import view.JPanelOrder;
 
@@ -60,6 +62,12 @@ public class SlideController {
                 break;
             case "Employee":
             	node = new JPanelEmployee();
+            	break;
+            case "Customer":
+            	node = new JPanelCustomer();
+            	break;
+            case "Beverage":
+            	node = new JPanelBeverage();
             	break;
             default:
                 break;

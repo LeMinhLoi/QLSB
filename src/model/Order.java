@@ -51,6 +51,13 @@ public class Order {
 	public void setIdCustomer(int idCustomer) {
 		this.idCustomer = idCustomer;
 	}
+
+
+	@Override
+	public String toString() {
+		return "Order [idCateYard_Time=" + idCateYard_Time + ", idYard=" + idYard + ", date=" + date + ", idCustomer="
+				+ idCustomer + "]";
+	}
 	
 	
 }

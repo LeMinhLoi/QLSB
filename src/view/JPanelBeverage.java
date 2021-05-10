@@ -1,27 +1,28 @@
 package view;
 
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
+import java.awt.Color;
+import java.awt.Font;
+
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
 import javax.swing.JTextField;
-
-import java.awt.Color;
-import java.awt.Font;
 import javax.swing.SwingConstants;
 
-public class JPanelCustomer extends JPanel {
-	private JTable table;
-	private JTextField tfSearch;
-	private JScrollPane scrollPane;
-	private JTable jtbCustomer;
+public class JPanelBeverage extends JPanel {
+	
+	private JTextField textField;
+	private JTable jtbEmployee;
 	private JButton btnDelete;
 	private JButton btnAdd;
 	private JButton btnEdit;
 	private JComboBox cbbSort;
-	public JPanelCustomer() {
+	private JScrollPane scrollPane;
+	
+	public JPanelBeverage() {
 		setLayout(null);
 		
 		
@@ -30,8 +31,8 @@ public class JPanelCustomer extends JPanel {
 		scrollPane.setBounds(220, 73, 610, 357);
 		add(scrollPane);
 		
-		jtbCustomer = new JTable();
-		scrollPane.setViewportView(jtbCustomer);
+		jtbEmployee = new JTable();
+		scrollPane.setViewportView(jtbEmployee);
 		
 
 		JPanel panel = new JPanel();
@@ -67,10 +68,10 @@ public class JPanelCustomer extends JPanel {
 		cbbSort.setBounds(20, 277, 173, 33);
 		panel.add(cbbSort);
 		
-		tfSearch = new JTextField();
-		tfSearch.setBounds(588, 27, 135, 20);
-		add(tfSearch);
-		tfSearch.setColumns(10);
+		textField = new JTextField();
+		textField.setBounds(588, 27, 135, 20);
+		add(textField);
+		textField.setColumns(10);
 		
 		JButton btnSearch = new JButton("T\u00ECm ki\u1EBFm");
 		btnSearch.setBounds(741, 26, 89, 23);
@@ -80,5 +81,7 @@ public class JPanelCustomer extends JPanel {
 		jlbSearch.setHorizontalAlignment(SwingConstants.RIGHT);
 		jlbSearch.setBounds(519, 30, 59, 14);
 		add(jlbSearch);
+
 	}
+
 }
