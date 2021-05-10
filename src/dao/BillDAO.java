@@ -100,11 +100,10 @@ public class BillDAO {
 		ResultSet rs = null;
 		if(ConnectDatabase.open()) {
         	try {
-        		ps = ConnectDatabase.cnn.prepareStatement("select AUTO_INCREMENT FROM "
-        				+ "information_schema.tables WHERE table_name = 'bill' AND table_schema = 'qlsb'");
+        		ps = ConnectDatabase.cnn.prepareStatement("select AUTO_INCREMENT FROM information_schema.tables "
+        				+ "WHERE table_name = 'bill' AND table_schema = 'qlsb'");
         		rs = ps.executeQuery();
         		while(rs.next()) {
-        			System.out.print(rs.getInt(1) + " ");
         			value = rs.getInt(1);
         		}
         	}catch (SQLException ex) {
@@ -120,7 +119,7 @@ public class BillDAO {
 		Bill bill = new Bill(47, Date.valueOf("2001-07-20"),
 				Time.valueOf("20:00:00"), 4, 3, 2);
 		BillDAO billdao = new BillDAO();
-		billdao.insertBill(bill);
+		//billdao.insertBill(bill);
 		//billdao.updateBill(bill);
 		 //billdao.deleteBillByDate("2001-07-13", "2001-07-26");
 //		beverageDAO.updateBeverage(beverage);

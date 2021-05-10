@@ -12,7 +12,7 @@ public class BeverageBillDAO {
 		PreparedStatement ps = null;
 		if (ConnectDatabase.open()) {
             try {
-                ps = ConnectDatabase.cnn.prepareStatement("insert into beverage_bill values (?,?,?)");
+                ps = ConnectDatabase.cnn.prepareStatement("insert into beveragebill values (?,?,?)");
                 ps.setString(1, String.valueOf(beverageBill.getIdBeveBill()));
                 ps.setString(2, String.valueOf(beverageBill.getIdBeve()));
                 ps.setString(3, String.valueOf(beverageBill.getMountBeve()));
@@ -33,7 +33,7 @@ public class BeverageBillDAO {
 		PreparedStatement ps = null;
 		if (ConnectDatabase.open()) {
             try {
-                ps = ConnectDatabase.cnn.prepareStatement("update beverage_bill "
+                ps = ConnectDatabase.cnn.prepareStatement("update beveragebill "
                 		+ "set idBeverage = ?,"
                 		+ "mount = ?"
                 		+ "where id_beverage_Bill = ? ");
@@ -55,7 +55,7 @@ public class BeverageBillDAO {
 	}
 	
 	public static void main(String[] args) {
-		BeverageBill beverage = new BeverageBill(1,12,100);
+		BeverageBill beverage = new BeverageBill(2,12,100);
 		BeverageBillDAO beverageBillDAO = new BeverageBillDAO();
 		beverageBillDAO.insertBeverageBill(beverage);
 		//beverageBillDAO.updateBeverageBill(beverage);
