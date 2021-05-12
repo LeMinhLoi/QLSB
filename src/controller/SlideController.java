@@ -10,8 +10,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import model.CategoryPanel;
-import view.JPanelEmployee;
-import view.JPanelOrder;
+import view.*;
 
 public class SlideController {
 
@@ -56,10 +55,13 @@ public class SlideController {
 			// TODO Auto-generated method stub
 			switch (kind) {
             case "Order":
-                node = new JPanelEmployee();
+                node = new JPanelOrder();
                 break;
             case "Employee":
             	node = new JPanelEmployee();
+            	break;
+            case "Beverage":
+            	node = new JPanelBeverage();
             	break;
             default:
                 break;

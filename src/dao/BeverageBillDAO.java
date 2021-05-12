@@ -4,7 +4,6 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
 import connect.ConnectDatabase;
-import model.Beverage;
 import model.BeverageBill;
 
 public class BeverageBillDAO {
@@ -12,7 +11,7 @@ public class BeverageBillDAO {
 		PreparedStatement ps = null;
 		if (ConnectDatabase.open()) {
             try {
-                ps = ConnectDatabase.cnn.prepareStatement("insert into beveragebill values (?,?,?)");
+                ps = ConnectDatabase.cnn.prepareStatement("insert into beverage_bill values (?,?,?)");
                 ps.setString(1, String.valueOf(beverageBill.getIdBeveBill()));
                 ps.setString(2, String.valueOf(beverageBill.getIdBeve()));
                 ps.setString(3, String.valueOf(beverageBill.getMountBeve()));
@@ -33,10 +32,10 @@ public class BeverageBillDAO {
 		PreparedStatement ps = null;
 		if (ConnectDatabase.open()) {
             try {
-                ps = ConnectDatabase.cnn.prepareStatement("update beveragebill "
+                ps = ConnectDatabase.cnn.prepareStatement("update beverage_bill "
                 		+ "set idBeverage = ?,"
                 		+ "mount = ?"
-                		+ "where id_beverage_Bill = ? ");
+                		+ "where idBeverage = ? ");
                 ps.setString(1, String.valueOf(beverageBill.getIdBeve()));
                 ps.setString(2, String.valueOf(beverageBill.getMountBeve()));
                 ps.setString(3, String.valueOf(beverageBill.getIdBeveBill()));
@@ -55,9 +54,9 @@ public class BeverageBillDAO {
 	}
 	
 	public static void main(String[] args) {
-		BeverageBill beverage = new BeverageBill(2,12,100);
+		BeverageBill beverage = new BeverageBill(5,12,100);
 		BeverageBillDAO beverageBillDAO = new BeverageBillDAO();
-		beverageBillDAO.insertBeverageBill(beverage);
+		//beverageBillDAO.insertBeverageBill(beverage);
 		//beverageBillDAO.updateBeverageBill(beverage);
 //		beverageDAO.updateBeverage(beverage);
 		//beverageDAO.deleteBeverage(1);

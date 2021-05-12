@@ -86,6 +86,5 @@ public class OrderDAO {
 //		List<Order> list = OrderDAO.getAllOrder();
 		for(Order item : list) 
 		System.out.println(item.toString());
+		}
 	}
-
-}

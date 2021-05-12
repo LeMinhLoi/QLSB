@@ -10,6 +10,10 @@ import connect.ConnectDatabase;
 import model.Beverage;
 
 public class BeverageDAO {
+	
+	public BeverageDAO() {
+		
+	}
 	public static Beverage insertBeverage(Beverage beverage) {
 		PreparedStatement ps = null;
 		if (ConnectDatabase.open()) {
@@ -106,6 +110,8 @@ public class BeverageDAO {
 		ResultSet rs = null;
 		if(ConnectDatabase.open()) {
         	try {
+        		ps = ConnectDatabase.cnn.prepareStatement("SET @@SESSION.information_schema_stats_expiry = 0 ");
+        		ps.executeQuery();
         		ps = ConnectDatabase.cnn.prepareStatement("select AUTO_INCREMENT FROM information_schema.tables WHERE table_name = 'beverage' AND table_schema = 'qlsb'");
         		rs = ps.executeQuery();
         		while(rs.next()) {
@@ -120,7 +126,7 @@ public class BeverageDAO {
 		return value;
 	}
 	public static void main(String[] args) {
-//		Beverage beverage = new Beverage(555,"Loi",123,124,"c",10);
+		//Beverage beverage = new Beverage(1,"Loi","c",123,124,10);
 		BeverageDAO beverageDAO = new BeverageDAO();
 //		beverageDAO.insertBeverage(beverage);
 //		beverageDAO.updateBeverage(beverage);
@@ -129,6 +135,6 @@ public class BeverageDAO {
 		for(Beverage item : list) {
 			System.out.println(item.toString());
 		}
-		System.out.println(beverageDAO.nextId());
+		System.out.println(beverageDAO.nextId());;
 	}
 }

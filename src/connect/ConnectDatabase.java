@@ -11,7 +11,7 @@ import java.util.logging.Logger;
 
 public class ConnectDatabase {
 	public static String driver = "com.mysql.cj.jdbc.Driver";
-    public static String url = "jdbc:mysql://localhost:3306/qlsb?verifyServerCertificate=false&useSSL=true";
+    public static String url = "jdbc:mysql://localhost:3306/qlsb?allowMultiQueries=true";
     public static String user = "root";
     public static String pass = "132671";
     
