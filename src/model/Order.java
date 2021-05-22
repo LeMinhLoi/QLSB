@@ -2,6 +2,10 @@ package model;
 
 import java.sql.Date;
 
+import dao.PriceDAO;
+import dao.TimeDAO;
+import dao.YardDAO;
+
 public class Order {
 	
 	private int idOrder;
@@ -55,6 +59,15 @@ public class Order {
 	@Override
 	public String toString()
 	{
-		return "ID Order: " + this.idOrder + " ID Time: " + this.idCateYard_Time;
+		String k = "Sân ";
+		for(Yard i : YardDAO.getAllYard())
+			if(i.getIdYard() == this.idYard)
+				k += i.getNameYard();
+		for(Price i : PriceDAO.getAllPrice())
+			if(i.getIdCateYard_Time() == this.idCateYard_Time)
+				for(Time j : TimeDAO.getAllTime())
+					if(j.getIdTime() == i.getIdTime())
+						k += "  " + j.getTime();
+		return k;
 	}
 }

@@ -8,9 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import connect.ConnectDatabase;
-import model.BeverageBill;
-import model.Beverage;
-import model.Order; 
+import model.Order;
 
 public class OrderDAO {
 	
@@ -50,6 +48,29 @@ public class OrderDAO {
 		}catch(SQLException e) {
 			System.out.println("Delete fail!"+ e.toString());
 		}
+	}
+	
+	public static List<Order> getAllOrder(){
+		Order Order = null;
+		List<Order> list = null;
+		PreparedStatement ps = null;
+        ResultSet rs = null;
+        if(ConnectDatabase.open()) {
+        	try {
+        		ps = ConnectDatabase.cnn.prepareStatement("select * from ordered");
+        		rs = ps.executeQuery();
+        		list = new ArrayList<Order>();
+        		while(rs.next()) {
+        			Order = new Order(rs.getInt(1),rs.getInt(2), rs.getInt(3), rs.getDate(4), rs.getInt(5));
+        			list.add(Order);
+        		}
+        	}catch (SQLException ex) {
+        		System.out.println("Get Order fail!" + ex);
+            } finally {
+            	ConnectDatabase.close(ps, rs);
+            }
+        }
+		return list;
 	}
 	
 	public static List<Order> getOrderByDateTime(Date date,int idTime){

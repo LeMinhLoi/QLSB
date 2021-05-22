@@ -29,6 +29,7 @@ public class SlideController {
 		root.removeAll();
 		root.setLayout(new BorderLayout());
 		root.add(new JPanelOrder());
+		root.add(new JPanelBill());
 		root.validate();
 		root.repaint();
 	}
@@ -62,6 +63,9 @@ public class SlideController {
             	break;
             case "Beverage":
             	node = new JPanelBeverage();
+            	break;
+            case "Bill":
+            	node = new JPanelBill();
             	break;
             default:
                 break;

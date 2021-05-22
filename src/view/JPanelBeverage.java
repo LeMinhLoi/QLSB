@@ -124,7 +124,6 @@ public class JPanelBeverage extends JPanel implements ActionListener{
 
 		public void createFrame(int ID) 
 		{
-			
 			JFrameAddvsEditBeverage addvsEditBeverage = new JFrameAddvsEditBeverage(ID ,this);
 			addvsEditBeverage.setVisible(true);
 		}

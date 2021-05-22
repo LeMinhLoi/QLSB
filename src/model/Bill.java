@@ -1,7 +1,7 @@
 package model;
 
-import java.sql.Date;
 import java.sql.Time;
+import java.sql.Date;
 
 public class Bill {
 	private int idBill;

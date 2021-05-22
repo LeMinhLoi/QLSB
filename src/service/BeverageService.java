@@ -52,6 +52,11 @@ public class BeverageService {
 		return false;
 	}
 	
+	public int NextID()
+	{
+		return BeverageDAO.nextId();
+	}
+	
 	public Beverage UpdateOrAdd(Beverage Beverage)
 	{
 		if(Check(Beverage.getIdBeverage())) 
@@ -129,12 +134,6 @@ public class BeverageService {
 		for(Beverage item : listBeverage)
 			if(item.getIdBeverage() == ID) return false;
 		return true;
-	}
-
-	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-		BeverageService b = new BeverageService();
-		System.out.print(Compare("Đặng Thanh Tuyên", "ên"));
 	}
 
 }

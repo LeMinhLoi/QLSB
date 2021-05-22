@@ -8,6 +8,7 @@ import java.util.List;
 
 import connect.ConnectDatabase;
 import model.Beverage;
+import model.BeverageBill;
 
 public class BeverageDAO {
 	
@@ -103,6 +104,20 @@ public class BeverageDAO {
             }
         }
 		return list;
+	}
+	public static int Price(int id)
+	{
+		int price = 0;
+		for(Beverage k : getAllBeverage())
+			if(id == k.getIdBeverage()) return k.getPrice();
+		return price;
+	}
+	public static String Name(int id)
+	{
+		String k = "";
+		for(Beverage m : getAllBeverage())
+			if(id == m.getIdBeverage()) return m.getNameBeverage();
+		return k;
 	}
 	public static int nextId() {
 		int value = -1;

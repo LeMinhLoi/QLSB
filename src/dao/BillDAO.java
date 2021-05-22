@@ -5,9 +5,10 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Time;
+import java.util.ArrayList;
+import java.util.List;
 
 import connect.ConnectDatabase;
-import model.BeverageBill;
 import model.Bill;
 
 public class BillDAO {
@@ -22,13 +23,16 @@ public class BillDAO {
                 ps.setString(3, String.valueOf(bill.getCreateTime()));
                 ps.setString(4, String.valueOf(bill.getTotal()));
                 ps.setString(5, String.valueOf(bill.getIdEmployee()));
-                ps.setString(6, String.valueOf(bill.getIdOrder()));
+                if(bill.getIdOrder() != 0)
+                	ps.setString(6, String.valueOf(bill.getIdOrder()));
+                else 
+                	ps.setString(6, null);
                 int row = ps.executeUpdate();
                 if (row < 1) {
                 	bill = null;
                 }
             } catch (SQLException ex) {
-                System.out.println("Insert Bill fail!");
+                System.out.println("Insert Bill fail!" + ex);
                 bill = null;
             } finally {
             	ConnectDatabase.close(ps);
@@ -36,6 +40,30 @@ public class BillDAO {
         }
         return bill;
 	}
+	
+	public static List<Bill> getAllBill(){
+		Bill Bill = null;
+		List<Bill> list = null;
+		PreparedStatement ps = null;
+        ResultSet rs = null;
+        if(ConnectDatabase.open()) {
+        	try {
+        		ps = ConnectDatabase.cnn.prepareStatement("select * from bill");
+        		rs = ps.executeQuery();
+        		list = new ArrayList<Bill>();
+        		while(rs.next()) {
+        			Bill = new Bill(rs.getInt(1),rs.getDate(2),rs.getTime(3),rs.getInt(4),rs.getInt(5),rs.getInt(6));
+        			list.add(Bill);
+        		}
+        	}catch (SQLException ex) {
+        		System.out.println("Get Bill fail!" + ex);
+            } finally {
+            	ConnectDatabase.close(ps, rs);
+            }
+        }
+		return list;
+	}
+	
 	public static Bill updateBill(Bill bill) {
 		PreparedStatement ps = null;
 		if (ConnectDatabase.open()) {
@@ -59,7 +87,7 @@ public class BillDAO {
                     bill = null;
                 }
             } catch (SQLException ex) {
-                System.out.println("Update beverage fail!" + ex.toString());
+                System.out.println("Update Bill fail!" + ex.toString());
                 bill = null;
             } finally {
             	ConnectDatabase.close(ps);
@@ -115,19 +143,8 @@ public class BillDAO {
 		return value ;
 	}
 	
-	public static void main(String[] args) {
-		Bill bill = new Bill(47, Date.valueOf("2001-07-20"),
-				Time.valueOf("20:00:00"), 4, 3, 2);
-		BillDAO billdao = new BillDAO();
-		//billdao.insertBill(bill);
-		//billdao.updateBill(bill);
-		 //billdao.deleteBillByDate("2001-07-13", "2001-07-26");
-//		beverageDAO.updateBeverage(beverage);
-		//beverageDAO.deleteBeverage(1);
-//		List<Beverage> list = beverageDAO.getAllBeverage();
-//		for(Beverage item : list) {
-//			System.out.println(item.toString());
-//		}
-		System.out.println(billdao.nextId());
+	public static void main(String[] args)
+	{
+		System.out.println(nextId());
 	}
 }

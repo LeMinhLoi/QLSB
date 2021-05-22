@@ -53,7 +53,7 @@ public class JFrameAddvsEditBeverage extends JFrame {
 			txtPrice.setText(String.valueOf(b.getPrice()));
 			txtMount.setText(String.valueOf(b.getMount()));
 		}
-		else txtID.setText(String.valueOf(BeverageDAO.nextId()));
+		else txtID.setText(String.valueOf(BeverageService.NextID()));
 	}
 		
 	private void initComponents() {

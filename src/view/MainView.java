@@ -195,6 +195,7 @@ public class MainView extends JFrame {
 		list.add(new CategoryPanel("Order",jlbOrder,panelOrder));
 		list.add(new CategoryPanel("Employee",jlbEmployee,panelEmployee));
 		list.add(new CategoryPanel("Beverage",jlbBeverage,panelBeverage));
+		list.add(new CategoryPanel("Bill", jlbBill, panelBill));
 		SlideController sc = new SlideController(pnRoot);
 		sc.setView(panelOrder, jlbOrder);
 		sc.setEvent(list);
