@@ -198,10 +198,8 @@ public class JFrameBill extends JFrame implements ActionListener{
 		cbbIDOrder = new JComboBox();
 		cbbIDOrder.addItemListener(new ItemListener() {
 			public void itemStateChanged(ItemEvent e) {
-				int temp;
-				if(cbbIDOrder.getSelectedIndex() == 0)
-					temp = 0;
-				else temp = ((Order)cbbIDOrder.getSelectedItem()).getIdOrder();
+				int temp =(cbbIDOrder.getSelectedIndex() == 0) ? 0 
+						: ((Order)cbbIDOrder.getSelectedItem()).getIdOrder();
 				txtTotal.setText(String.valueOf(billService.ToTal(lBeveBill, temp)));
 			}
 		});
@@ -317,10 +315,8 @@ public class JFrameBill extends JFrame implements ActionListener{
 					}
 				cbbBeve.setSelectedIndex(0);
 				spinner.setValue(0);
-				int temp;
-				if(cbbIDOrder.getSelectedIndex() == 0)
-					temp = 0;
-				else temp = ((Order)cbbIDOrder.getSelectedItem()).getIdOrder();
+				int temp =(cbbIDOrder.getSelectedIndex() == 0) ? 0 
+						: ((Order)cbbIDOrder.getSelectedItem()).getIdOrder();
 	        	txtTotal.setText(String.valueOf(billService.ToTal(lBeveBill, temp)));
 				showBeveBill(ID, lBeveBill);
 			}
