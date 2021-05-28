@@ -222,7 +222,7 @@ public class JFrameBill extends JFrame implements ActionListener{
 				for(BeverageBill w : lBeveBillAdd)
 					billBeverageService.Add(w);
 				dispose();
-				jPanelBill.showBill(0);
+				jPanelBill.showBill(0, dformat.format(jPanelBill.dateChooser.getDate()));
 			}
 		});
 		btnOK.setFont(new Font("Tahoma", Font.PLAIN, 13));
@@ -255,20 +255,6 @@ public class JFrameBill extends JFrame implements ActionListener{
 		btnDel.setBounds(10, 57, 93, 35);
 		btnDel.addActionListener(this);
 		panel.add(btnDel);
-		
-		JComboBox cbbSort = new JComboBox();
-		cbbSort.addItemListener(new ItemListener() {
-			public void itemStateChanged(ItemEvent e) {
-				Object[][] data = billService.Sort(ID, cbbSort.getSelectedIndex());
-				String col[] = {"STT", "Tên Mặt Hàng", "Số Lượng", "Đơn Giá", "Thành Tiền"};
-				DefaultTableModel model = (DefaultTableModel) table.getModel();
-		        model.setDataVector(data, col);
-			}
-		});
-		cbbSort.setModel(new DefaultComboBoxModel(new String[] {"Số Lượng", "Đơn Giá", "Thành Tiền"}));
-		cbbSort.setFont(new Font("Tahoma", Font.BOLD, 14));
-		cbbSort.setBounds(10, 149, 93, 35);
-		panel.add(cbbSort);
 		
 		JLabel lblNewLabel_6 = new JLabel("Sắp Xếp Theo");
 		lblNewLabel_6.setFont(new Font("Tahoma", Font.PLAIN, 14));
@@ -315,9 +301,6 @@ public class JFrameBill extends JFrame implements ActionListener{
 					}
 				cbbBeve.setSelectedIndex(0);
 				spinner.setValue(0);
-				int temp =(cbbIDOrder.getSelectedIndex() == 0) ? 0 
-						: ((Order)cbbIDOrder.getSelectedItem()).getIdOrder();
-	        	txtTotal.setText(String.valueOf(billService.ToTal(lBeveBill, temp)));
 				showBeveBill(ID, lBeveBill);
 			}
 		});
@@ -340,6 +323,8 @@ public class JFrameBill extends JFrame implements ActionListener{
 		if(e.getActionCommand().equals("Xóa")) {
 			String name = table.getModel().getValueAt(table.getSelectedRow(),1).toString();
 			billBeverageService.delet(ID, billBeverageService.ReID(name));
+			billBeverageService.deleteList(ID, billBeverageService.ReID(name), lBeveBill);
+			billBeverageService.deleteList(ID, billBeverageService.ReID(name), lBeveBillAdd);
 			showBeveBill(ID, null);
 		}else if(e.getActionCommand().equals("Thêm")) {
 			pnlAdd.setVisible(true);;
@@ -351,6 +336,9 @@ public class JFrameBill extends JFrame implements ActionListener{
 				: billBeverageService.showBeverageBills(ID, l);
 		String col[] = {"STT", "Tên Mặt Hàng", "Số Lượng", "Đơn Giá", "Thành Tiền"};
 		DefaultTableModel model = (DefaultTableModel) table.getModel();
+		int temp =(cbbIDOrder.getSelectedIndex() == 0) ? 0 
+				: ((Order)cbbIDOrder.getSelectedItem()).getIdOrder();
+    	txtTotal.setText(String.valueOf(billService.ToTal(lBeveBill, temp)));
         model.setDataVector(data, col);
 	}
 }

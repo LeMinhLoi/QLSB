@@ -42,36 +42,12 @@ public class BillService {
 			return BillDAO.updateBill(Bill);
 	}
 	
-	public Object[][]  Sort(int IDEmpl, int m)
-	{
-		List<Bill> l = BillDAO.getAllBill();
-		Collections.sort(l,  new Comparator<Bill>() {
-            @Override
-            public int compare(Bill o1, Bill o2) {
-            	switch(m)
-            	{
-            		case 1:
-            			return o1.getCreateDate().toString().
-            					compareTo(o2.getCreateDate().toString());
-            		case 2:
-            			return o1.getTotal() - o2.getTotal();
-            		case 3:
-            			return o1.getIdEmployee() - o2.getIdEmployee();
-            		case 4:
-            			return o1.getIdOrder() - o2.getIdOrder();
-            		default:
-            			return o1.getIdBill() - o2.getIdBill();
-            	}
-            }
-        });
-		return showBills(IDEmpl, l); 
-	}
-	
-	public static Object[][] showBills(int IDEmpl, List<Bill> l){
+	public static Object[][] showBills(int IDEmpl, List<Bill> l, String d){
 		Object[][] result = new Object[l.size()][10];
 		int dem = 0;
 		for(int i = 0 ; i < l.size() ; i++) {
-			if(IDEmpl == 0 || IDEmpl == l.get(i).getIdEmployee())
+			if((IDEmpl == 0 || IDEmpl == l.get(i).getIdEmployee())
+					&& (l.get(i).getCreateDate().toString().equals(d) || d == ""))
 			{
 				result[dem][0] = dem + 1;
 				result[dem][1] = l.get(i).getIdBill();
@@ -86,9 +62,9 @@ public class BillService {
 		return result;
 	}
 	
-	public Object[][] showBills(int IDEmpl){
+	public Object[][] showBills(int IDEmpl, String d){
 		listBill = BillDAO.getAllBill();
-		return showBills(IDEmpl, listBill);
+		return showBills(IDEmpl, listBill, d);
 	}
 	
 	public int NextID()

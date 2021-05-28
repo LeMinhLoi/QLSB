@@ -23,6 +23,13 @@ public class BeverageBillService {
 		BeverageBillDAO.deleteBeverageBill(idBeveBill, idBeve);
 	}
 	
+	public void deleteList(int idBeveBill, int idBeve, List<BeverageBill> b)
+	{
+		for(int i = 0; i < b.size(); ++i)
+			if(b.get(i).getIdBeveBill() == idBeveBill && b.get(i).getIdBeve() == idBeve)
+				b.remove(i);
+	}
+	
 	public List<BeverageBill> getAllBeverageBill(int ID) {
 		List<BeverageBill> l = new ArrayList<>();
 		for(BeverageBill i : BeverageBillDAO.getAllBeveBill())

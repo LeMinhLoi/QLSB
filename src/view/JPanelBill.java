@@ -17,14 +17,33 @@ import service.BillService;
 
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JTextField;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+
 import java.awt.event.ItemListener;
+import java.sql.Date;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.awt.event.ItemEvent;
 import javax.swing.JLabel;
+import com.toedter.calendar.JDateChooser;
+import java.awt.event.HierarchyListener;
+import java.awt.event.HierarchyEvent;
+import java.awt.event.InputMethodListener;
+import java.awt.event.InputMethodEvent;
+import javax.swing.event.ChangeListener;
+import javax.swing.event.ChangeEvent;
+import java.awt.Button;
 
 public class JPanelBill extends JPanel implements ActionListener{
 	private JTable jtbBill;
 	private JTextField txtIDEmp;
 	private BillService BillService;
+	public JDateChooser dateChooser;
+	private static DateFormat dformat = new SimpleDateFormat("yyyy-MM-dd");
+	private JButton btnDelbyDate;
+	private JDateChooser dateChoDel1;
+	private JDateChooser dateChoDel2;
 
 	/**
 	 * Create the panel.
@@ -32,7 +51,7 @@ public class JPanelBill extends JPanel implements ActionListener{
 	public JPanelBill() {
 		initComponents();
 		BillService = new BillService();
-		showBill(0);
+		showBill(0, dformat.format(dateChooser.getDate()));
 	}
 	
 	private void initComponents() {
@@ -40,54 +59,90 @@ public class JPanelBill extends JPanel implements ActionListener{
 		
 		JPanel panel = new JPanel();
 		panel.setLayout(null);
-		panel.setBounds(0, 0, 205, 411);
+		panel.setBounds(0, 0, 205, 422);
 		add(panel);
 		
 		JButton btnAdd = new JButton("Thêm");
 		btnAdd.setFont(new Font("Tahoma", Font.BOLD, 14));
-		btnAdd.setBounds(10, 37, 185, 48);
+		btnAdd.setBounds(10, 76, 185, 48);
 		btnAdd.addActionListener(this);
 		panel.add(btnAdd);
 		
 		JButton btnEdit = new JButton("Sửa");
 		btnEdit.setFont(new Font("Tahoma", Font.BOLD, 14));
-		btnEdit.setBounds(10, 96, 185, 48);
+		btnEdit.setBounds(10, 135, 185, 48);
 		btnEdit.addActionListener(this);
 		panel.add(btnEdit);
 		
 		JButton btn = new JButton("Xóa");
 		btn.setFont(new Font("Tahoma", Font.BOLD, 14));
-		btn.setBounds(10, 155, 185, 48);
+		btn.setBounds(10, 194, 185, 48);
 		btn.addActionListener(this);
 		panel.add(btn);
 		
-		JComboBox cbbSort = new JComboBox();
-		cbbSort.addItemListener(new ItemListener() {
-			public void itemStateChanged(ItemEvent e) {
-				int k = (txtIDEmp.getText().length() < 1) ? 0 : Integer.parseInt(txtIDEmp.getText());
-				Object[][] data = BillService.Sort(k, cbbSort.getSelectedIndex());
-				String col[] = {"STT", "ID Bill", "Create Date", "Create Time", "Total", "ID Employee", "ID Order"};
-				DefaultTableModel model = (DefaultTableModel) jtbBill.getModel();
-		        model.setDataVector(data, col);
+		btnDelbyDate = new JButton("Xóa Theo Ngày");
+		btnDelbyDate.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				BillService.DelByDate(dformat.format(dateChoDel1.getDate())
+						, dformat.format(dateChoDel2.getDate()));
 			}
 		});
-		cbbSort.setModel(new DefaultComboBoxModel(new String[] {"ID Bill", "Date Create", "Total", "ID Employee", "ID Order"}));
-		cbbSort.setFont(new Font("Tahoma", Font.BOLD, 14));
-		cbbSort.setBounds(10, 250, 185, 48);
-		panel.add(cbbSort);
-		
-		JButton btnDelbyDate = new JButton("Xóa Theo Ngày");
 		btnDelbyDate.setFont(new Font("Tahoma", Font.BOLD, 14));
-		btnDelbyDate.setBounds(10, 309, 185, 48);
+		btnDelbyDate.setBounds(10, 253, 185, 48);
 		panel.add(btnDelbyDate);
 		
-		JLabel lblNewLabel = new JLabel("    Sắp Xếp Theo");
-		lblNewLabel.setFont(new Font("Tahoma", Font.PLAIN, 14));
-		lblNewLabel.setBounds(42, 214, 153, 25);
-		panel.add(lblNewLabel);
+		JLabel lblBillDate = new JLabel("Bill Ngày");
+		lblBillDate.setFont(new Font("Tahoma", Font.BOLD, 18));
+		lblBillDate.setBounds(10, 11, 136, 27);
+		panel.add(lblBillDate);
+		
+		dateChooser = new JDateChooser();
+		dateChooser.getSpinner().addChangeListener(new ChangeListener() {
+			public void stateChanged(ChangeEvent e) {
+				int i = (txtIDEmp.getText().length() < 1) ? 0 :
+					Integer.parseInt(txtIDEmp.getText());
+				showBill(i, dformat.format(dateChooser.getDate()));
+			}
+		});
+		dateChooser.setBounds(10, 38, 185, 27);
+		panel.add(dateChooser);
+		
+		JPanel pnlDel = new JPanel();
+		pnlDel.setBounds(10, 312, 185, 99);
+		panel.add(pnlDel);
+		pnlDel.setLayout(null);
+		
+		dateChoDel1 = new JDateChooser();
+		dateChoDel1.setBounds(10, 26, 134, 20);
+		pnlDel.add(dateChoDel1);
+		
+		JLabel lblNewLabel = new JLabel("Từ ngày");
+		lblNewLabel.setFont(new Font("Tahoma", Font.PLAIN, 11));
+		lblNewLabel.setBounds(10, 11, 134, 14);
+		pnlDel.add(lblNewLabel);
+		
+		JLabel lblNewLabel_1 = new JLabel("Đến ngày");
+		lblNewLabel_1.setFont(new Font("Tahoma", Font.PLAIN, 11));
+		lblNewLabel_1.setBounds(10, 48, 134, 14);
+		pnlDel.add(lblNewLabel_1);
+		
+		dateChoDel2 = new JDateChooser();
+		dateChoDel2.setBounds(10, 68, 134, 20);
+		pnlDel.add(dateChoDel2);
+		
+		JButton btnShowAll = new JButton("ShowAll");
+		btnShowAll.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				int i = (txtIDEmp.getText().length() < 1) ? 0 :
+					Integer.parseInt(txtIDEmp.getText());
+				showBill(i, "");
+			}
+		});
+		btnShowAll.setBounds(106, 11, 89, 23);
+		panel.add(btnShowAll);
 		
 		JScrollPane scrollPane = new JScrollPane();
-		scrollPane.setBounds(233, 87, 547, 300);
+		scrollPane.setBounds(233, 75, 547, 312);
 		add(scrollPane);
 		
 		jtbBill = new JTable();
@@ -101,21 +156,26 @@ public class JPanelBill extends JPanel implements ActionListener{
 		));
 		scrollPane.setViewportView(jtbBill);
 		
-		JButton btnSearch = new JButton("Tìm Kiếm");
-		btnSearch.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				if(txtIDEmp.getText().length() < 1)
-					showBill(0);
-				else showBill(Integer.parseInt(txtIDEmp.getText()));
-			}
-		});
-		btnSearch.setFont(new Font("Tahoma", Font.PLAIN, 13));
-		btnSearch.setBounds(691, 53, 89, 23);
-		add(btnSearch);
-		
 		txtIDEmp = new JTextField();
+		txtIDEmp.getDocument().addDocumentListener(new DocumentListener() {
+			  public void changedUpdate(DocumentEvent e) {
+			    warn();
+			  }
+			  public void removeUpdate(DocumentEvent e) {
+			    warn();
+			  }
+			  public void insertUpdate(DocumentEvent e) {
+			    warn();
+			  }
+			  public void warn() {
+		    	 if(txtIDEmp.getText().length() < 1)
+						showBill(0, dformat.format(dateChooser.getDate()));
+					else showBill(Integer.parseInt(txtIDEmp.getText()),
+							dformat.format(dateChooser.getDate()));
+			  }
+			});
 		txtIDEmp.setFont(new Font("Tahoma", Font.PLAIN, 13));
-		txtIDEmp.setBounds(565, 56, 116, 20);
+		txtIDEmp.setBounds(664, 44, 116, 20);
 		add(txtIDEmp);
 		txtIDEmp.setColumns(10);
 	}
@@ -132,16 +192,16 @@ public class JPanelBill extends JPanel implements ActionListener{
 		if(e.getActionCommand().equals("Xóa")) {
 			int getID = Integer.parseInt(jtbBill.getModel().getValueAt(jtbBill.getSelectedRow(),1).toString());
 			BillService.deleteBill(getID);
-			showBill(0);
+			showBill(0, dformat.format(dateChooser.getDate()));
 		}else if(e.getActionCommand().equals("Thêm")) {
-			createFrame(0222);
+			createFrame(111);
 			//createFrame(BillService.NextID());
 		}else if(e.getActionCommand().equals("Sửa")) {
 			createFrame(Integer.parseInt(jtbBill.getModel().getValueAt(jtbBill.getSelectedRow(),1).toString()));
 		}
 	}
-	public void showBill(int IDEmpl) {
-		Object[][] data = BillService.showBills(IDEmpl);
+	public void showBill(int IDEmpl, String d) {
+		Object[][] data = BillService.showBills(IDEmpl, d);
 		String col[] = {"STT", "ID Bill", "Create Date", "Create Time", "Total", "ID Employee", "ID Order"};
 		DefaultTableModel model = (DefaultTableModel) jtbBill.getModel();
         model.setDataVector(data, col);
