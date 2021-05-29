@@ -68,6 +68,7 @@ public class JFrameBill extends JFrame implements ActionListener{
 	private JButton btnExitAdd;
 	private static List<BeverageBill> lBeveBill;
 	private static List<BeverageBill> lBeveBillAdd;
+	private static List<BeverageBill> lBeveBillDel;
 	/**
 	 * Launch the application.
 	 */
@@ -97,6 +98,7 @@ public class JFrameBill extends JFrame implements ActionListener{
 		lBeveBill = (billService.Check(ID)) ? new ArrayList<>()
 				: billBeverageService.getAllBeverageBill(ID);
 		lBeveBillAdd = new ArrayList<>();
+		lBeveBillDel = new ArrayList<>();
 		SetCBB();
 		cbbIDOrder.setSelectedIndex(0);
 		SetUp();
@@ -221,6 +223,9 @@ public class JFrameBill extends JFrame implements ActionListener{
 				billService.UpdateOrAdd(newb);
 				for(BeverageBill w : lBeveBillAdd)
 					billBeverageService.Add(w);
+				if(!lBeveBillDel.isEmpty())
+					for(BeverageBill i : lBeveBillDel)
+						billBeverageService.delet(i.getIdBeveBill(), i.getIdBeve());
 				dispose();
 				jPanelBill.showBill(0, jPanelBill.getDateChooser());
 			}
@@ -322,10 +327,11 @@ public class JFrameBill extends JFrame implements ActionListener{
 	{
 		if(e.getActionCommand().equals("Xóa")) {
 			String name = table.getModel().getValueAt(table.getSelectedRow(),1).toString();
-			billBeverageService.delet(ID, billBeverageService.ReID(name));
 			billBeverageService.deleteList(ID, billBeverageService.ReID(name), lBeveBill);
-			billBeverageService.deleteList(ID, billBeverageService.ReID(name), lBeveBillAdd);
-			showBeveBill(ID, null);
+			if(!lBeveBillAdd.isEmpty())
+				billBeverageService.deleteList(ID, billBeverageService.ReID(name), lBeveBillAdd);
+			lBeveBillDel.add(billBeverageService.checkID(ID, billBeverageService.ReID(name)));
+			showBeveBill(ID, lBeveBill);
 		}else if(e.getActionCommand().equals("Thêm")) {
 			pnlAdd.setVisible(true);;
 		}

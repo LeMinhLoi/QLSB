@@ -34,6 +34,10 @@ public class BillService {
 		BillDAO.deleteBillByDate(date1, date2);
 	}
 	
+	public void DelOrder(int IDOrder)
+	{
+		OrderDAO.deleteOrder(IDOrder);
+	}
 	public Bill UpdateOrAdd(Bill Bill)
 	{
 		if(Check(Bill.getIdBill())) 

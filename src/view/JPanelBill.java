@@ -36,6 +36,9 @@ import javax.swing.event.ChangeListener;
 import javax.swing.event.ChangeEvent;
 import java.awt.Button;
 import com.toedter.calendar.JDayChooser;
+
+import model.Order;
+
 import java.awt.ScrollPane;
 
 public class JPanelBill extends JPanel implements ActionListener{
@@ -200,9 +203,11 @@ public class JPanelBill extends JPanel implements ActionListener{
 	{
 		if(e.getActionCommand().equals("Xóa")) {
 			int getID = Integer.parseInt(jtbBill.getModel().getValueAt(jtbBill.getSelectedRow(),1).toString());
+			int i = BillService.checkID(getID).getIdOrder();
 			bilBeverageBillService.deleteBillBeveOfBill(
 			bilBeverageBillService.getAllBeverageBill(getID));
 			BillService.deleteBill(getID);
+			BillService.DelOrder(i);
 			showBill(0, "");
 		}else if(e.getActionCommand().equals("Thêm")) {
 			createFrame(111);

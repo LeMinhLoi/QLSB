@@ -124,10 +124,11 @@ public class BeverageBillService {
 		listBeverageBill = BeverageBillDAO.getAllBeveBill();
 		return showBeverageBills(ID, listBeverageBill);
 	}
-	public BeverageBill checkID(int Id) {
+	public BeverageBill checkID(int IdBeveBill, int IDBeve) {
 		listBeverageBill = BeverageBillDAO.getAllBeveBill();
 		for(BeverageBill item : listBeverageBill) {	
-			if(item.getIdBeveBill() == Id) 	return item;
+			if(item.getIdBeveBill() == IdBeveBill && item.getIdBeve() == IDBeve) 
+				return item;
 		}
 		return null;
 	}
