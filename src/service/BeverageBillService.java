@@ -22,7 +22,11 @@ public class BeverageBillService {
 	{
 		BeverageBillDAO.deleteBeverageBill(idBeveBill, idBeve);
 	}
-	
+	public void deleteBillBeveOfBill(List<BeverageBill> l)
+	{
+		for(BeverageBill i : l)
+			BeverageBillDAO.deleteBeverageBill(i.getIdBeveBill(), i.getIdBeve());
+	}
 	public void deleteList(int idBeveBill, int idBeve, List<BeverageBill> b)
 	{
 		for(int i = 0; i < b.size(); ++i)

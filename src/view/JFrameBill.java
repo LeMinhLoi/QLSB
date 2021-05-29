@@ -222,7 +222,7 @@ public class JFrameBill extends JFrame implements ActionListener{
 				for(BeverageBill w : lBeveBillAdd)
 					billBeverageService.Add(w);
 				dispose();
-				jPanelBill.showBill(0, dformat.format(jPanelBill.dateChooser.getDate()));
+				jPanelBill.showBill(0, jPanelBill.getDateChooser());
 			}
 		});
 		btnOK.setFont(new Font("Tahoma", Font.PLAIN, 13));

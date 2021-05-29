@@ -13,6 +13,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 
+import service.BeverageBillService;
 import service.BillService;
 
 import javax.swing.DefaultComboBoxModel;
@@ -34,16 +35,19 @@ import java.awt.event.InputMethodEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.ChangeEvent;
 import java.awt.Button;
+import com.toedter.calendar.JDayChooser;
+import java.awt.ScrollPane;
 
 public class JPanelBill extends JPanel implements ActionListener{
 	private JTable jtbBill;
 	private JTextField txtIDEmp;
 	private BillService BillService;
-	public JDateChooser dateChooser;
+	private JDateChooser dateChooser;
 	private static DateFormat dformat = new SimpleDateFormat("yyyy-MM-dd");
 	private JButton btnDelbyDate;
 	private JDateChooser dateChoDel1;
 	private JDateChooser dateChoDel2;
+	private BeverageBillService bilBeverageBillService;
 
 	/**
 	 * Create the panel.
@@ -51,7 +55,12 @@ public class JPanelBill extends JPanel implements ActionListener{
 	public JPanelBill() {
 		initComponents();
 		BillService = new BillService();
+		bilBeverageBillService = new BeverageBillService();
 		showBill(0, dformat.format(dateChooser.getDate()));
+	}
+	
+	public String getDateChooser() {
+		return dformat.format(dateChooser.getDate());
 	}
 	
 	private void initComponents() {
@@ -191,8 +200,10 @@ public class JPanelBill extends JPanel implements ActionListener{
 	{
 		if(e.getActionCommand().equals("Xóa")) {
 			int getID = Integer.parseInt(jtbBill.getModel().getValueAt(jtbBill.getSelectedRow(),1).toString());
+			bilBeverageBillService.deleteBillBeveOfBill(
+			bilBeverageBillService.getAllBeverageBill(getID));
 			BillService.deleteBill(getID);
-			showBill(0, dformat.format(dateChooser.getDate()));
+			showBill(0, "");
 		}else if(e.getActionCommand().equals("Thêm")) {
 			createFrame(111);
 			//createFrame(BillService.NextID());
