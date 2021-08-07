@@ -6,12 +6,17 @@
 			<attribute name="module" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="D:/PBL2/8.0.21/mysql-connector-java-8.0.21.jar">
+	<classpathentry kind="lib" path="D:/Cac hoc ki/Ki 3/PBL2/PBL2/mysql_connector/mysql-connector-java-8.0.21.jar">
 		<attributes>
 			<attribute name="module" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="E:/JCalendar setup/lib/jcalendar-1.4.jar">
+	<classpathentry kind="lib" path="E:/JCalendar setup/New folder/jcalendar-1.2.2.jar">
+		<attributes>
+			<attribute name="module" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="E:/JCalendar setup/New folder (2)/jfreechart-1.0.19/jfreechart-1.0.19-demo.jar">
 		<attributes>
 			<attribute name="module" value="true"/>
 		</attributes>

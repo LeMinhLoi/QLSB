@@ -2,14 +2,19 @@ package view;
 
 import javax.swing.JPanel;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+
 import com.toedter.calendar.JDateChooser;
 
-import model.Button_Yard;
 import model.Order;
 import model.Time;
+import model.Yard;
+import model.other.Button_Yard;
+import service.CustomerService;
 import service.OrderService;
 import service.TimeService;
-import java.sql.Date;
+import service.YardService;
+
 import javax.swing.JComboBox;
 import javax.swing.JButton;
 import javax.swing.SwingConstants;
@@ -24,6 +29,7 @@ public class JPanelOrder extends JPanel {
 
 	private JDateChooser dateChooser;
 	private JComboBox cbbChooseTime;
+	
 	private JButton btnSan5A;
 	private JButton btnSan5B;
 	private JButton btnSan5C;
@@ -34,33 +40,47 @@ public class JPanelOrder extends JPanel {
 	private JButton btnSan7B;
 	private JButton btnShow;
 	
+	private List<Time> listTime = null;
 	private List<Button_Yard> listButtonYard = null;
 	private List<Order> listOrder = null;
-	private OrderService orderService = null;
-	private TimeService timeService = null;
-	private List<Time> listTime = null;
 	
 	public JPanelOrder() {
 		initComponents();
 		listButtonYard = new ArrayList<Button_Yard>();
-		listButtonYard.add(new Button_Yard(1,btnSan5A));
-		listButtonYard.add(new Button_Yard(2,btnSan5B));
-		listButtonYard.add(new Button_Yard(3,btnSan5C));
-		listButtonYard.add(new Button_Yard(4,btnSan5D));
-		listButtonYard.add(new Button_Yard(5,btnSan5E));
-		listButtonYard.add(new Button_Yard(6,btnSan5F));
-		listButtonYard.add(new Button_Yard(7,btnSan7A));
-		listButtonYard.add(new Button_Yard(8,btnSan7B));
-		timeService = new TimeService();
-		listTime = timeService.getAllTime();
+		listButtonYard.add(new Button_Yard(1,btnSan5A,0));
+		listButtonYard.add(new Button_Yard(2,btnSan5B,0));
+		listButtonYard.add(new Button_Yard(3,btnSan5C,0));
+		listButtonYard.add(new Button_Yard(4,btnSan5D,0));
+		listButtonYard.add(new Button_Yard(5,btnSan5E,0));
+		listButtonYard.add(new Button_Yard(6,btnSan5F,0));
+		listButtonYard.add(new Button_Yard(7,btnSan7A,0));
+		listButtonYard.add(new Button_Yard(8,btnSan7B,0));
+		
+		listTime = TimeService.getInstance().getAllTime();
 		cbbChooseTime.addItem("Hãy chọn giờ");
 		for(Time item : listTime) {
 			cbbChooseTime.addItem(item);
 		}
-		orderService = new OrderService();
 		
-		ButtonListener buttonListener = new ButtonListener();
-		btnShow.addActionListener(buttonListener);
+		List<Yard> listYard = YardService.getInstance().getAllYard();
+		for(int i = 0 ; i < listYard.size() ; i++) {
+			if(listYard.get(i).getStatus() == 0) {
+				listButtonYard.get(i).setStatus(2);
+				listButtonYard.get(i).getButton().setBackground(new Color(255,0,0));
+			}
+		}
+		
+		ButtonShow buttonShow = new ButtonShow();
+		btnShow.addActionListener(buttonShow);
+		ButtonYard buttonYard = new ButtonYard();
+		btnSan5A.addActionListener(buttonYard);
+		btnSan5B.addActionListener(buttonYard);
+		btnSan5C.addActionListener(buttonYard);
+		btnSan5D.addActionListener(buttonYard);
+		btnSan5E.addActionListener(buttonYard);
+		btnSan5F.addActionListener(buttonYard);
+		btnSan7A.addActionListener(buttonYard);
+		btnSan7B.addActionListener(buttonYard);
 	}
 	private void initComponents() {
 		setLayout(null);
@@ -131,23 +151,73 @@ public class JPanelOrder extends JPanel {
 		add(btnShow);
 
 	}
-	private class ButtonListener implements ActionListener{
-
+	private class ButtonShow implements ActionListener{
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			// TODO Auto-generated method stub
-			if(e.getActionCommand().equals("Hiển thị")) {
-				System.out.println("Clicked button show");
-				listOrder = orderService.getOrderByDateTime(dateChooser.getDate(), ((Time)cbbChooseTime.getSelectedItem()).getIdTime());
-				for(int i = 0 ; i < listOrder.size() ; i++) {
-					System.out.println(listOrder.get(i).toString());
+			if(cbbChooseTime.getSelectedIndex() == 0 || dateChooser.getDate() == null) {
+				JOptionPane.showMessageDialog(getPanel(), "Hãy đảm bảo đã chọn đủ ngày và giờ.\n");
+			}else {
+				for(int i = 0 ; i < 8 ; i ++) {// reset tất cả các màu các nút sẽ là màu cam
+					if(listButtonYard.get(i).getStatus() != 2) {
+						listButtonYard.get(i).getButton().setBackground(Color.ORANGE);
+						listButtonYard.get(i).setStatus(0);// đánh dấu là chưa đặt
+					}
 				}
-				System.out.println("pass");
-				for(int i = 0 ; i < listButton.size() ; i++) {
-					if()
+				listOrder = OrderService.getInstance().getOrderByDate_Time(dateChooser.getDate(), ((Time)cbbChooseTime.getSelectedItem()).getIdTime());//lấy danh sách Order theo ngày và time
+				for(int i = 0 ; i < listOrder.size() ; i++) {
+					int id = listOrder.get(i).getIdYard();//lấy id Sân đã được đặt
+					for(Button_Yard item : listButtonYard) {
+						if(item.getIdYard() == id) {
+							item.getButton().setBackground(new Color(50, 205, 50));// set Color cho sân đã được đặt là màu xanh lá cây
+							item.setStatus(1);// đánh dấu sân đã được đặt
+						}
+					}
 				}
 			}
 		}
-		
+	}
+	private class ButtonYard implements ActionListener{
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			// TODO Auto-generated method stub
+			if(cbbChooseTime.getSelectedIndex() == 0 || dateChooser.getDate() == null) {
+				JOptionPane.showMessageDialog(getPanel(), "Hãy đảm bảo đã chọn đủ ngày và giờ.\n");
+			}else {
+				for(int i = 0 ; i < 8 ; i++) {
+					if(listButtonYard.get(i).getButton().getText().equals(e.getActionCommand())) {//sân đã được bấm
+						if(listButtonYard.get(i).getStatus() == 0) {//nếu sân vẫn chưa ai đặt thì...
+							FillPhone fillPhone = new FillPhone(listButtonYard.get(i), dateChooser.getDate(),((Time)cbbChooseTime.getSelectedItem()).getIdTime());
+							fillPhone.setVisible(true);
+						}else if(listButtonYard.get(i).getStatus() == 1){
+							int idYard = 0;
+							switch(e.getActionCommand()) {
+								case "Sân 5A": idYard = 1; break;
+								case "Sân 5B": idYard = 2; break;
+								case "Sân 5C": idYard = 3; break;
+								case "Sân 5D": idYard = 4; break;
+								case "Sân 5E": idYard = 5; break;
+								case "Sân 5F": idYard = 6; break;
+								case "Sân 7A": idYard = 7; break;
+								case "Sân 7B": idYard = 8; break;
+								default: break;
+							}
+							Order order = OrderService.getInstance().getOrderByTime_Date_Yard(((Time)cbbChooseTime.getSelectedItem()).getIdTime(),  idYard, dateChooser.getDate() );
+							int a = JOptionPane.showConfirmDialog(getPanel(),"Bạn chắc chắn muốn huỷ sân?\n"+CustomerService.getInstance().checkID(order.getIdCustomer()).toString());
+							if(a == JOptionPane.YES_OPTION) {
+								OrderService.getInstance().deleteOrder(order.getIdOrder());
+								listButtonYard.get(i).setStatus(0);
+								listButtonYard.get(i).getButton().setBackground(Color.ORANGE);
+							}
+						}else {
+							JOptionPane.showMessageDialog(getPanel(), "Sân tạm thời không phục vụ.\n");
+						}
+					}
+				}
+			}
+		}
+	}
+	public JPanel getPanel() {
+		return this;
 	}
 }

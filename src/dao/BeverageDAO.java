@@ -8,17 +8,25 @@ import java.util.List;
 
 import connect.ConnectDatabase;
 import model.Beverage;
+import model.BeverageBill;
 
 public class BeverageDAO {
 	
-	public BeverageDAO() {
-		
+	private static BeverageDAO instance;
+	private BeverageDAO() {	
 	}
-	public static Beverage insertBeverage(Beverage beverage) {
+	public static BeverageDAO getInstance() {
+		if( instance == null) {
+			instance = new BeverageDAO();
+		}
+		return instance;
+	}
+	
+	public  Beverage insertBeverage(Beverage beverage) {
 		PreparedStatement ps = null;
-		if (ConnectDatabase.open()) {
+		if (ConnectDatabase.getInstance().open()) {
             try {
-                ps = ConnectDatabase.cnn.prepareStatement("insert into beverage values (?,?,?,?,?,?)");
+                ps = ConnectDatabase.getInstance().getCnn().prepareStatement("insert into beverage values (?,?,?,?,?,?,1)");
                 ps.setString(1, String.valueOf(beverage.getIdBeverage()));
                 ps.setString(2, beverage.getNameBeverage());
                 ps.setString(3, String.valueOf(beverage.getMount()));
@@ -31,18 +39,19 @@ public class BeverageDAO {
                 }
             } catch (SQLException ex) {
                 System.out.println("Insert beverage fail!");
+                ex.printStackTrace();
                 beverage = null;
             } finally {
-            	ConnectDatabase.close(ps);
+            	ConnectDatabase.getInstance().close(ps);
             }
         }
         return beverage;
 	}
-	public static Beverage updateBeverage(Beverage beverage) {
+	public  Beverage updateBeverage(Beverage beverage) {
 		PreparedStatement ps = null;
-		if (ConnectDatabase.open()) {
+		if (ConnectDatabase.getInstance().open()) {
             try {
-                ps = ConnectDatabase.cnn.prepareStatement("update beverage "
+                ps = ConnectDatabase.getInstance().getCnn().prepareStatement("update beverage "
                 		+ "set namebeverage = ?,"
                 		+ "mount = ?,"
                 		+ "originalPrice = ?,"
@@ -62,34 +71,36 @@ public class BeverageDAO {
                 }
             } catch (SQLException ex) {
                 System.out.println("Update beverage fail!" + ex.toString());
+                ex.printStackTrace();
                 beverage = null;
             } finally {
-            	ConnectDatabase.close(ps);
+            	ConnectDatabase.getInstance().close(ps);
             }
         }
         return beverage;
 	}
-	public static void deleteBeverage(int idBeverage) {
+	public  void deleteBeverage(int idBeverage) {
 		PreparedStatement ps = null;
 		try {
-			if(ConnectDatabase.open()) {
-				ps = ConnectDatabase.cnn.prepareStatement("delete from beverage where idBeverage = ?");
+			if(ConnectDatabase.getInstance().open()) {
+				ps = ConnectDatabase.getInstance().getCnn().prepareStatement("update beverage set status = 0 where idBeverage = ?");
 				ps.setString(1, String.valueOf(idBeverage));
 				ps.executeUpdate();
-				ConnectDatabase.close();
+				ConnectDatabase.getInstance().close();
 			}
 		}catch(SQLException e) {
 			System.out.println("Delete fail!"+ e.toString());
+			e.printStackTrace();
 		}
 	}
-	public static List<Beverage> getAllBeverage(){
+	public  List<Beverage> getAllBeverage(){
 		Beverage beverage = null;
 		List<Beverage> list = null;
 		PreparedStatement ps = null;
         ResultSet rs = null;
-        if(ConnectDatabase.open()) {
+        if(ConnectDatabase.getInstance().open()) {
         	try {
-        		ps = ConnectDatabase.cnn.prepareStatement("select * from beverage");
+        		ps = ConnectDatabase.getInstance().getCnn().prepareStatement("select * from beverage where status = 1");
         		rs = ps.executeQuery();
         		list = new ArrayList<Beverage>();
         		while(rs.next()) {
@@ -99,20 +110,34 @@ public class BeverageDAO {
         	}catch (SQLException ex) {
         		System.out.println("Get beverage fail!");
             } finally {
-            	ConnectDatabase.close(ps, rs);
+            	ConnectDatabase.getInstance().close(ps, rs);
             }
         }
 		return list;
 	}
-	public static int nextId() {
+	public  int Price(int id)
+	{
+		int price = 0;
+		for(Beverage k : getAllBeverage())
+			if(id == k.getIdBeverage()) return k.getPrice();
+		return price;
+	}
+	public  String Name(int id)
+	{
+		String k = "";
+		for(Beverage m : getAllBeverage())
+			if(id == m.getIdBeverage()) return m.getNameBeverage();
+		return k;
+	}
+	public  int nextId() {
 		int value = -1;
 		PreparedStatement ps = null;
 		ResultSet rs = null;
-		if(ConnectDatabase.open()) {
+		if(ConnectDatabase.getInstance().open()) {
         	try {
-        		ps = ConnectDatabase.cnn.prepareStatement("SET @@SESSION.information_schema_stats_expiry = 0 ");
+        		ps = ConnectDatabase.getInstance().getCnn().prepareStatement("SET @@SESSION.information_schema_stats_expiry = 0 ");
         		ps.executeQuery();
-        		ps = ConnectDatabase.cnn.prepareStatement("select AUTO_INCREMENT FROM information_schema.tables WHERE table_name = 'beverage' AND table_schema = 'qlsb'");
+        		ps = ConnectDatabase.getInstance().getCnn().prepareStatement("select AUTO_INCREMENT FROM information_schema.tables WHERE table_name = 'beverage' AND table_schema = 'qlsb'");
         		rs = ps.executeQuery();
         		while(rs.next()) {
         			value = rs.getInt(1);
@@ -120,21 +145,9 @@ public class BeverageDAO {
         	}catch (SQLException ex) {
         		System.out.println("Get beverage fail!");
             } finally {
-            	ConnectDatabase.close(ps, rs);
+            	ConnectDatabase.getInstance().close(ps, rs);
             }
         }
 		return value;
-	}
-	public static void main(String[] args) {
-		//Beverage beverage = new Beverage(1,"Loi","c",123,124,10);
-		BeverageDAO beverageDAO = new BeverageDAO();
-//		beverageDAO.insertBeverage(beverage);
-//		beverageDAO.updateBeverage(beverage);
-		//beverageDAO.deleteBeverage(1);
-		List<Beverage> list = beverageDAO.getAllBeverage();
-		for(Beverage item : list) {
-			System.out.println(item.toString());
-		}
-		System.out.println(beverageDAO.nextId());;
 	}
 }

@@ -11,40 +11,49 @@ import model.Price;
 
 public class PriceDAO {
 	
-	public static Price updatePrice(Price price) {
+	private static PriceDAO instance;
+	private PriceDAO() {
+	}
+	public static PriceDAO getInstance() {
+		if( instance == null) {
+			instance = new PriceDAO();
+		}
+		return instance;
+	}
+	
+	public  int updatePrice(int idPrice, int price) {
 		PreparedStatement ps = null;
-		if (ConnectDatabase.open()) {
+		int check = 1;
+		if (ConnectDatabase.getInstance().open()) {
             try {
-                ps = ConnectDatabase.cnn.prepareStatement("update price set "
+                ps = ConnectDatabase.getInstance().getCnn().prepareStatement("update price set "
                  		+ "price = ? "
-                		+ "where idTime = ? "
-                		+ "AND idTime_CateYard = ? "
-                		+ "AND idCategory_Yard = ? ");
-            	ps.setString(1, String.valueOf(price.getPrice()));
-            	ps.setString(2, String.valueOf(price.getIdTime()));
-            	ps.setString(3, String.valueOf(price.getIdCateYard_Time()));
-            	ps.setString(4, String.valueOf(price.getIdCateYard()));
+                		+ "where idTime_CateYard = ? ");
+
+            	ps.setString(1, String.valueOf(price));
+            	ps.setString(2, String.valueOf(idPrice));
                 int row = ps.executeUpdate();
                 if (row < 1) {
-                    price = null;
+                    check = 0;
                 }
             } catch (SQLException ex) {
                 System.out.println("Update Price fail!");
-                price = null;
+                ex.printStackTrace();
+                check = 0;
             } finally {
-            	ConnectDatabase.close(ps);
+            	ConnectDatabase.getInstance().close(ps);
             }
         }
-        return price;	
+        return check;	
 	}
-	public static List<Price> getAllPrice(){
+	public  List<Price> getAllPrice(){
 		Price price = null;
 		List<Price> list = null;
 		PreparedStatement ps = null;
         ResultSet rs = null;
-        if(ConnectDatabase.open()) {
+        if(ConnectDatabase.getInstance().open()) {
         	try {
-        		ps = ConnectDatabase.cnn.prepareStatement("select * from price");
+        		ps = ConnectDatabase.getInstance().getCnn().prepareStatement("select * from price");
         		rs = ps.executeQuery();
         		list = new ArrayList<Price>();
         		while(rs.next()) {
@@ -54,7 +63,7 @@ public class PriceDAO {
         	}catch (SQLException ex) {
         		System.out.println("Get price fail!");
             } finally {
-            	ConnectDatabase.close(ps, rs);
+            	ConnectDatabase.getInstance().close(ps, rs);
             }
         }
 		return list;

@@ -7,23 +7,29 @@ import model.Employee;
 
 public class EmployeeService {
 	
-	private EmployeeDAO employeeDAO;
-	private List<Employee> listEmployee;
+	private static Employee storeUser = null;
+	private List<Employee> listEmployee = null;
 	
-	public EmployeeService() {
-		employeeDAO = new EmployeeDAO();
+	private static EmployeeService instance;
+	private EmployeeService() {
+	}
+	public static EmployeeService getInstance() {
+		if(instance == null) {
+			instance = new EmployeeService();
+		}
+		return instance;
 	}
 	public List<Employee> getAllEmployee() {
-		return employeeDAO.getAllEmployees();
+		return EmployeeDAO.getInstance().getAllEmployees();
 	}
 	public Employee updateEmployee(Employee employee) {
-		return employeeDAO.updateEmployee(employee);
+		return EmployeeDAO.getInstance().updateEmployee(employee);
 	}
 	public Employee insertEmployee(Employee employee) {
-		return employeeDAO.insertEmployee(employee);
+		return EmployeeDAO.getInstance().insertEmployee(employee);
 	}
 	public Object[][] showEmployees(){
-		listEmployee = employeeDAO.getAllEmployees();
+		listEmployee = EmployeeDAO.getInstance().getAllEmployees();
 		Object[][] result = new Object[listEmployee.size()][10];
 		for(int i = 0 ; i < listEmployee.size() ; i++) {
 			result[i][0] = i + 1;
@@ -48,19 +54,32 @@ public class EmployeeService {
 		return result;
 	}
 	public void deleteEmployee(int idEmmployee) {
-		employeeDAO.deleteEmployee(idEmmployee);
+		EmployeeDAO.getInstance().deleteEmployee(idEmmployee);
 	}
 	public int getNextIdEmployee() {
-		return employeeDAO.nextId();
+		return EmployeeDAO.getInstance().nextId();
 	}
-	public Employee checkID(int Id) {
-		listEmployee = employeeDAO.getAllEmployees();
+	public Employee checkIDEmployee(int IdEmployee) {
+		listEmployee = EmployeeDAO.getInstance().getAllEmployees();
 		for(Employee item : listEmployee) {
-			if(item.getIdCustomer() == Id) return item;
+			if(item.getIdCustomer() == IdEmployee) return item;
 		}
 		return null;
 	}
-	public static void main(String[] args) {
-		
+	public Employee checkEmployee(String password, int id) {
+		List<Employee> list = getAllEmployee();
+		for(Employee item : list) {
+			if(item.getPassword().equals(password) && item.getIdCustomer() == id) {
+				return item;
+			}
+		}
+		return null;
 	}
+	public static Employee getStoreUser() {
+		return storeUser;
+	}
+	public static void setStoreUser(Employee storeUser) {
+		EmployeeService.storeUser = storeUser;
+	}
+	
 }

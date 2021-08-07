@@ -6,11 +6,18 @@ import java.awt.EventQueue;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
+
+import model.Employee;
+import service.EmployeeService;
+
 import javax.swing.JTextField;
 import javax.swing.JPasswordField;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.SwingConstants;
 import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.Color;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -20,27 +27,23 @@ public class Login extends JFrame {
 	private JPanel contentPane;
 	private JTextField textFieldID;
 	private JPasswordField passwordField;
+	private JButton btnReset;
+	private JButton btnLogin;
 
 	/**
 	 * Launch the application.
 	 */
-	public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					Login frame = new Login();
-					frame.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-	}
-
-	/**
-	 * Create the frame.
-	 */
+	
 	public Login() {
+		initCompoents();
+		
+		ButtonLogin buttonLogin = new ButtonLogin();
+		btnLogin.addActionListener(buttonLogin);
+		ButtonReset buttonReset = new ButtonReset();
+		btnReset.addActionListener(buttonReset);
+	}
+	
+	private void initCompoents() {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 603, 420);
 		contentPane = new JPanel();
@@ -57,17 +60,17 @@ public class Login extends JFrame {
 		passwordField.setBounds(380, 147, 161, 31);
 		contentPane.add(passwordField);
 		
-		JLabel lblNewLabel = new JLabel("ID");
-		lblNewLabel.setFont(new Font("Microsoft Tai Le", Font.BOLD, 15));
-		lblNewLabel.setHorizontalAlignment(SwingConstants.CENTER);
-		lblNewLabel.setBounds(280, 70, 68, 23);
-		contentPane.add(lblNewLabel);
+		JLabel jlbID = new JLabel("ID");
+		jlbID.setFont(new Font("Microsoft Tai Le", Font.BOLD, 15));
+		jlbID.setHorizontalAlignment(SwingConstants.CENTER);
+		jlbID.setBounds(280, 70, 68, 23);
+		contentPane.add(jlbID);
 		
-		JLabel lblNewLabel_1 = new JLabel("Password");
-		lblNewLabel_1.setFont(new Font("Microsoft Tai Le", Font.BOLD, 15));
-		lblNewLabel_1.setHorizontalAlignment(SwingConstants.CENTER);
-		lblNewLabel_1.setBounds(280, 151, 68, 23);
-		contentPane.add(lblNewLabel_1);
+		JLabel jlbPassword = new JLabel("Password");
+		jlbPassword.setFont(new Font("Microsoft Tai Le", Font.BOLD, 15));
+		jlbPassword.setHorizontalAlignment(SwingConstants.CENTER);
+		jlbPassword.setBounds(280, 151, 68, 23);
+		contentPane.add(jlbPassword);
 		
 		JPanel panel = new JPanel();
 		panel.setBackground(Color.LIGHT_GRAY);
@@ -75,31 +78,31 @@ public class Login extends JFrame {
 		contentPane.add(panel);
 		panel.setLayout(null);
 		
-		JLabel lblNewLabel_2 = new JLabel("New label");
-		lblNewLabel_2.setIcon(new ImageIcon("D:\\\u1EA2NH\\ico_loginb.png"));
-		lblNewLabel_2.setBounds(21, 22, 175, 191);
-		panel.add(lblNewLabel_2);
+		JLabel jlbPicture = new JLabel("New label");
+		jlbPicture.setIcon(new ImageIcon("D:\\\u1EA2NH\\ico_loginb.png"));
+		jlbPicture.setBounds(21, 22, 175, 191);
+		panel.add(jlbPicture);
 		
-		JLabel lblNewLabel_3 = new JLabel("S\u00C2N B\u00D3NG TLTD");
-		lblNewLabel_3.setForeground(new Color(47, 79, 79));
-		lblNewLabel_3.setFont(new Font("Yu Gothic UI Semibold", Font.BOLD, 24));
-		lblNewLabel_3.setHorizontalAlignment(SwingConstants.CENTER);
-		lblNewLabel_3.setBounds(10, 288, 198, 82);
-		panel.add(lblNewLabel_3);
+		JLabel jlbSanBong = new JLabel("S\u00C2N B\u00D3NG TLTD");
+		jlbSanBong.setForeground(new Color(47, 79, 79));
+		jlbSanBong.setFont(new Font("Yu Gothic UI Semibold", Font.BOLD, 24));
+		jlbSanBong.setHorizontalAlignment(SwingConstants.CENTER);
+		jlbSanBong.setBounds(10, 288, 198, 82);
+		panel.add(jlbSanBong);
 		
-		JLabel lblNewLabel_4 = new JLabel("Welcome");
-		lblNewLabel_4.setForeground(new Color(105, 105, 105));
-		lblNewLabel_4.setHorizontalAlignment(SwingConstants.CENTER);
-		lblNewLabel_4.setFont(new Font("Yu Gothic Medium", Font.BOLD, 15));
-		lblNewLabel_4.setBounds(57, 258, 102, 30);
-		panel.add(lblNewLabel_4);
+		JLabel jlbWelcome = new JLabel("Welcome");
+		jlbWelcome.setForeground(new Color(105, 105, 105));
+		jlbWelcome.setHorizontalAlignment(SwingConstants.CENTER);
+		jlbWelcome.setFont(new Font("Yu Gothic Medium", Font.BOLD, 15));
+		jlbWelcome.setBounds(57, 258, 102, 30);
+		panel.add(jlbWelcome);
 		
 		JPanel panel_1 = new JPanel();
 		panel_1.setBackground(Color.LIGHT_GRAY);
 		panel_1.setBounds(217, 0, 370, 23);
 		contentPane.add(panel_1);
 		
-		JButton btnLogin = new JButton("Login");
+		btnLogin = new JButton("Login");
 		btnLogin.setBackground(Color.LIGHT_GRAY);
 		btnLogin.setFont(new Font("Microsoft JhengHei UI", Font.BOLD, 16));
 		btnLogin.setSelectedIcon(null);
@@ -107,7 +110,7 @@ public class Login extends JFrame {
 		btnLogin.setBounds(300, 273, 89, 41);
 		contentPane.add(btnLogin);
 		
-		JButton btnReset = new JButton("Reset");
+		btnReset = new JButton("Reset");
 		btnReset.setBackground(Color.LIGHT_GRAY);
 		btnReset.setFont(new Font("Microsoft JhengHei UI", Font.BOLD, 16));
 		btnReset.setBounds(438, 273, 89, 41);
@@ -122,5 +125,35 @@ public class Login extends JFrame {
 		panel_3.setBackground(Color.LIGHT_GRAY);
 		panel_3.setBounds(577, 23, 10, 347);
 		contentPane.add(panel_3);
+	}
+	
+	private class ButtonLogin implements ActionListener{
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			// TODO Auto-generated method stub
+			@SuppressWarnings("deprecation")
+			String password = passwordField.getText();
+			String id = textFieldID.getText();
+			if(EmployeeService.getInstance().checkEmployee(password, Integer.parseInt(id)) != null) {
+				EmployeeService.setStoreUser(EmployeeService.getInstance().checkEmployee(password, Integer.parseInt(id)));
+				Employee employee = EmployeeService.getInstance().checkEmployee(password, Integer.parseInt(id));
+				MainView mainView = new MainView(employee.getNameCustomer(),employee.getRole());
+				mainView.setVisible(true);
+				getThis().dispose();
+			}else {
+				JOptionPane.showMessageDialog(getThis(), "Mật khẩu hoặc ID không đúng.\nVui lòng kiểm tra lại.");
+			}
+		}
+	}
+	private class ButtonReset implements ActionListener{
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			// TODO Auto-generated method stub
+			passwordField.setText("");
+			textFieldID.setText("");
+		}
+	}
+	private Login getThis() {
+		return this;
 	}
 }

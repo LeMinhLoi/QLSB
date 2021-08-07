@@ -12,11 +12,22 @@ import model.Time;
 
 public class CateYardDAO {
 	
-	public static CateYard updateCateYard(CateYard cateYard) {
+	private static CateYardDAO instance;
+	
+	private CateYardDAO() {
+	}
+	public static CateYardDAO getInstance(){
+		if(instance == null) {
+			instance = new CateYardDAO();
+		}
+		return instance;
+	}
+	
+	public CateYard updateCateYard(CateYard cateYard) {
 		PreparedStatement ps = null;
-		if (ConnectDatabase.open()) {
+		if (ConnectDatabase.getInstance().open()) {
             try {
-                ps = ConnectDatabase.cnn.prepareStatement("update category_yard "
+                ps = ConnectDatabase.getInstance().getCnn().prepareStatement("update category_yard "
                  		+ "set nameCategory_Yard = ? "
                 		+ "where idCategory_Yard = ? ");
             	ps.setString(1, String.valueOf(cateYard.getNameCateYard()));
@@ -29,19 +40,19 @@ public class CateYardDAO {
                 System.out.println("Update CateYard fail!");
                 cateYard = null;
             } finally {
-            	ConnectDatabase.close(ps);
+            	ConnectDatabase.getInstance().close(ps);
             }
         }
         return cateYard;	
 	}
-	public static List<CateYard> getAllCateYard(){
+	public List<CateYard> getAllCateYard(){
 		CateYard cateYard = null;
 		List<CateYard> list = null;
 		PreparedStatement ps = null;
         ResultSet rs = null;
-        if(ConnectDatabase.open()) {
+        if(ConnectDatabase.getInstance().open()) {
         	try {
-        		ps = ConnectDatabase.cnn.prepareStatement("select * from price");
+        		ps = ConnectDatabase.getInstance().getCnn().prepareStatement("select * from category_yard");
         		rs = ps.executeQuery();
         		list = new ArrayList<CateYard>();
         		while(rs.next()) {
@@ -50,8 +61,9 @@ public class CateYardDAO {
         		}
         	}catch (SQLException ex) {
         		System.out.println("Get CateYard fail!");
+        		ex.printStackTrace();
             } finally {
-            	ConnectDatabase.close(ps, rs);
+            	ConnectDatabase.getInstance().close(ps, rs);
             }
         }
 		return list;

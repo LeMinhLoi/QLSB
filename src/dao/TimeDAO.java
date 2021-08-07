@@ -11,12 +11,20 @@ import model.Beverage;
 import model.Time;
 
 public class TimeDAO {
-	
-	public static Time updateTime(Time time) {
+	private static TimeDAO instance;
+	private TimeDAO() {	
+	}
+	public static TimeDAO getInstance() {
+		if( instance == null) {
+			instance = new TimeDAO();
+		}
+		return instance;
+	}
+	public Time updateTime(Time time) {
 		PreparedStatement ps = null;
-		if (ConnectDatabase.open()) {
+		if (ConnectDatabase.getInstance().open()) {
             try {
-                ps = ConnectDatabase.cnn.prepareStatement("update time "
+                ps = ConnectDatabase.getInstance().getCnn().prepareStatement("update time "
                 		+ "set time = ?"
                 		+ "where idTime = ? ");
                 
@@ -30,19 +38,19 @@ public class TimeDAO {
                 System.out.println("Update time fail!" + ex.toString());
                 time = null;
             } finally {
-            	ConnectDatabase.close(ps);
+            	ConnectDatabase.getInstance().close(ps);
             }
         }
         return time;
 	}
-	public static List<Time> getAllTime(){
+	public List<Time> getAllTime(){
 		List<Time> list = null;
 		Time time = null;
 		PreparedStatement ps = null;
         ResultSet rs = null;
-        if(ConnectDatabase.open()) {
+        if(ConnectDatabase.getInstance().open()) {
         	try {
-        		ps = ConnectDatabase.cnn.prepareStatement("select * from time");
+        		ps = ConnectDatabase.getInstance().getCnn().prepareStatement("select * from time");
         		rs = ps.executeQuery();
         		list = new ArrayList<Time>();
         		while(rs.next()) {
@@ -53,13 +61,9 @@ public class TimeDAO {
         		System.out.println("Get time fail!");
         		ex.printStackTrace();
             } finally {
-            	ConnectDatabase.close(ps, rs);
+            	ConnectDatabase.getInstance().close(ps, rs);
             }
         }
 		return list;
-	}
-	public static void main(String[] args) {
-		Time time = new Time(1, "20/12/2021");
-		TimeDAO.updateTime(time);
 	}
 }

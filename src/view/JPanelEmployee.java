@@ -5,17 +5,23 @@ import javax.swing.JScrollPane;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JTextField;
+import javax.swing.RowFilter;
 import javax.swing.JLabel;
 import java.awt.Color;
 import java.awt.Font;
 import javax.swing.SwingConstants;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableModel;
+import javax.swing.table.TableRowSorter;
 
 import com.mysql.cj.protocol.x.SyncFlushDeflaterOutputStream;
 
 //import controller.EmployeeController;
 import model.Employee;
 import service.EmployeeService;
+import utility.SortColumnTable;
 
 import javax.swing.JTable;
 import java.awt.event.ActionListener;
@@ -24,27 +30,52 @@ import java.awt.event.ActionEvent;
 public class JPanelEmployee extends JPanel {
 	private JTextField textField;
 	private JTable jtbEmployee;
-	private EmployeeService employeeService;
-//	private EmployeeController ec;
 	private JScrollPane scrollPane;
-	
 	private JButton btnDelete;
 	private JButton btnAdd;
 	private JButton btnEdit;
-	private JComboBox cbbSort;
+	
 	/**
 	 * Create the panel.
 	 */
 	public JPanelEmployee() {
 		
 		initComponents();
-		employeeService = new EmployeeService();
 		showEmployee();
 		
 		ButtonListener buttonListener = new ButtonListener();
 		btnAdd.addActionListener(buttonListener);
 		btnEdit.addActionListener(buttonListener);
 		btnDelete.addActionListener(buttonListener);
+		
+		SortColumnTable columnTable = new SortColumnTable(jtbEmployee);
+		
+		textField.getDocument().addDocumentListener(new DocumentListener() {
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+                String text = textField.getText();
+                if (text.trim().length() == 0) {
+                	columnTable.getRowSorter().setRowFilter(null);
+                } else {
+                	columnTable.getRowSorter().setRowFilter(RowFilter.regexFilter("(?i)" + text));
+                }
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+                String text = textField.getText();
+                if (text.trim().length() == 0) {
+                	columnTable.getRowSorter().setRowFilter(null);
+                } else {
+                	columnTable.getRowSorter().setRowFilter(RowFilter.regexFilter("(?i)" + text));
+                }
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+            }
+        });
+		
 		
 	}
 	private void initComponents() {
@@ -86,36 +117,28 @@ public class JPanelEmployee extends JPanel {
 		btnEdit.setBounds(20, 139, 173, 45);
 		panel.add(btnEdit);
 		
-		cbbSort = new JComboBox();
-		cbbSort.setForeground(Color.DARK_GRAY);
-		cbbSort.setFont(new Font("Tahoma", Font.BOLD, 15));
-		cbbSort.setBackground(new Color(102, 204, 255));
-		cbbSort.setBounds(20, 277, 173, 33);
-		panel.add(cbbSort);
-		
 		textField = new JTextField();
 		textField.setBounds(588, 27, 135, 20);
 		add(textField);
 		textField.setColumns(10);
 		
-		JButton btnSearch = new JButton("T\u00ECm ki\u1EBFm");
-		btnSearch.setBounds(741, 26, 89, 23);
-		add(btnSearch);
 		
 		JLabel jlbSearch = new JLabel("T\u00ECm ki\u1EBFm");
 		jlbSearch.setHorizontalAlignment(SwingConstants.RIGHT);
 		jlbSearch.setBounds(519, 30, 59, 14);
 		add(jlbSearch);
+		
+		
 	}
 	public void createFrame(boolean b) {
 		if( b == true) {
 			int getID = Integer.parseInt(jtbEmployee.getModel().getValueAt(jtbEmployee.getSelectedRow(),1).toString());
-			Employee employee = employeeService.checkID(getID);
+			Employee employee = EmployeeService.getInstance().checkIDEmployee(getID);
 			JFrameAddvsEditEmployee addvsEditEmployee = new JFrameAddvsEditEmployee(employee,this);
 			addvsEditEmployee.setVisible(true);
 			System.out.println("Đã tạo frame sửa");
 		}else if(b == false){
-			int nextID = employeeService.getNextIdEmployee();
+			int nextID = EmployeeService.getInstance().getNextIdEmployee();
 			JFrameAddvsEditEmployee addvsEditEmployee = new JFrameAddvsEditEmployee(nextID,this);
 			addvsEditEmployee.setVisible(true);
 			System.out.println("Đã tạo frame thêm");
@@ -128,7 +151,7 @@ public class JPanelEmployee extends JPanel {
 			// TODO Auto-generated method stub
 			if(e.getActionCommand().equals("Xoá")) {//nếu nhấn vào nút xoá thì ...
 				int getID = Integer.parseInt(jtbEmployee.getModel().getValueAt(jtbEmployee.getSelectedRow(),1).toString());
-				employeeService.deleteEmployee(getID);
+				EmployeeService.getInstance().deleteEmployee(getID);
 				showEmployee();
 				System.out.println("xoa");
 			}else if(e.getActionCommand().equals("Thêm")) {
@@ -143,9 +166,10 @@ public class JPanelEmployee extends JPanel {
 		
 	}
 	public void showEmployee() {
-		Object[][] data = employeeService.showEmployees();
+		Object[][] data = EmployeeService.getInstance().showEmployees();
 		String col[] = {"STT","ID","Name","Old","Gender","Address","Phone","IdentityNumber","Password","Role"};
 		DefaultTableModel model = (DefaultTableModel) jtbEmployee.getModel();
         model.setDataVector(data, col);
+        
 	}
 }

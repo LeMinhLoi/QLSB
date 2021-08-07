@@ -11,6 +11,7 @@ import javax.swing.table.DefaultTableModel;
 //import controller.EmployeeController;
 import model.Employee;
 import service.EmployeeService;
+import utility.RadioButton;
 
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -25,7 +26,6 @@ import javax.swing.JButton;
 import javax.swing.JDialog;
 
 public class JFrameAddvsEditEmployee extends JFrame {
-	private EmployeeService employeeService;
 	private JPanelEmployee jpnEmployee;
 	
 	private JPanel contentPane;
@@ -42,21 +42,6 @@ public class JFrameAddvsEditEmployee extends JFrame {
 	private JTextField tfIdentity;
 	private JButton btnOk;
 	private JButton btnCancel;
-	/**
-	 * Launch the application.
-	 */
-//	public static void main(String[] args) {
-//		EventQueue.invokeLater(new Runnable() {
-//			public void run() {
-//				try {
-//					JFrameAddvsEditEmployee frame = new JFrameAddvsEditEmployee(1);
-//					frame.setVisible(true);
-//				} catch (Exception e) {
-//					e.printStackTrace();
-//				}
-//			}
-//		});
-//	}
 
 	/**
 	 * Create the frame.
@@ -69,6 +54,21 @@ public class JFrameAddvsEditEmployee extends JFrame {
 		tfOld.setText(String.valueOf(employee.getOld()));
 		tfPass.setText(employee.getPassword());
 		tfPhone.setText(employee.getPhoneCustomer());
+		tfIdentity.setText(employee.getIdentityNumber());
+		RadioButton radioButtonController1 = new RadioButton(rdNam, rdNu);
+		RadioButton radioButtonController2 = new RadioButton(rdAdmin, rdNhanvien);
+		
+		if(employee.getGender() == 1) {
+			rdNam.setSelected(true);
+		}else {
+			rdNu.setSelected(true);
+		}
+		
+		if(employee.getRole() == 1) {
+			rdAdmin.setSelected(true);
+		}else {
+			rdNhanvien.setSelected(true);
+		}
 		
 		this.jpnEmployee = jpnEmployee;
 		
@@ -79,6 +79,9 @@ public class JFrameAddvsEditEmployee extends JFrame {
 	public JFrameAddvsEditEmployee(int idEmployee, JPanelEmployee jpnEmployee) {
 		initComponents();
 		tfID.setText(String.valueOf(idEmployee));
+		
+		RadioButton radioButtonController1 = new RadioButton(rdNam, rdNu);
+		RadioButton radioButtonController2 = new RadioButton(rdAdmin, rdNhanvien);
 		
 		this.jpnEmployee = jpnEmployee;
 		
@@ -211,10 +214,9 @@ public class JFrameAddvsEditEmployee extends JFrame {
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			employeeService = new EmployeeService();
 			// TODO Auto-generated method stub
 			if(e.getActionCommand().equals("OK")) {//nếu nhấn vào nút okay thì ...
-				if(employeeService.checkID(Integer.parseInt(tfID.getText())) != null) {//kiểm tra xem có mã tồn tại chưa, nếu có thì thực hiện update
+				if(EmployeeService.getInstance().checkIDEmployee(Integer.parseInt(tfID.getText())) != null) {//kiểm tra xem có mã tồn tại chưa, nếu có thì thực hiện update
 					Employee employee = new Employee();
 					employee.setIdCustomer(Integer.parseInt(tfID.getText()));
 					employee.setNameCustomer(tfName.getText());
@@ -226,8 +228,8 @@ public class JFrameAddvsEditEmployee extends JFrame {
 					if(rdNam.isSelected() == true) employee.setGender(1);
 					else employee.setGender(0);
 					if(rdAdmin.isSelected() == true) employee.setRole(1);
-					else employee.setGender(0);
-					if(employeeService.updateEmployee(employee) != null) {
+					else employee.setRole(0);
+					if(EmployeeService.getInstance().updateEmployee(employee) != null) {
 						JOptionPane.showMessageDialog(get(), "Update successfully!","Alert",JOptionPane.CLOSED_OPTION);
 						jpnEmployee.showEmployee();
 					}else {
@@ -245,8 +247,8 @@ public class JFrameAddvsEditEmployee extends JFrame {
 					if(rdNam.isSelected() == true) employee.setGender(1);
 					else employee.setGender(0);
 					if(rdAdmin.isSelected() == true) employee.setRole(1);
-					else employee.setGender(0);
-					if(employeeService.insertEmployee(employee) != null) {
+					else employee.setRole(0);
+					if(EmployeeService.getInstance().insertEmployee(employee) != null) {
 						JOptionPane.showMessageDialog(get(), "Insert successfully!","Alert",JOptionPane.CLOSED_OPTION);
 						jpnEmployee.showEmployee();
 					}else {

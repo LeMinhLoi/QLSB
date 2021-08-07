@@ -57,7 +57,7 @@ public class Beverage {
 	}
 	@Override
 	public String toString() {
-		return "Beverage [nameBeverage=" + nameBeverage + "]";
+		return nameBeverage;
 	}
 	
 	

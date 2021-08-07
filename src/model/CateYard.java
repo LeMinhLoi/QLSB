@@ -23,6 +23,10 @@ public class CateYard {
 	public void setNameCateYard(String nameCateYard) {
 		this.nameCateYard = nameCateYard;
 	}
+	@Override
+	public String toString() {
+		return nameCateYard;
+	}
 	
 	
 }

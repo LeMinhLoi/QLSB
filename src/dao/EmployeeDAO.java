@@ -10,12 +10,24 @@ import connect.ConnectDatabase;
 import model.Employee;
 
 public class EmployeeDAO {
+	private static EmployeeDAO instance;
 	
-	public static Employee insertEmployee(Employee employee) {
+	private EmployeeDAO() {
+		
+	}
+	
+	public static EmployeeDAO getInstance() {
+		if(instance == null) {
+			instance = new EmployeeDAO();
+		}
+		return instance;
+	}
+	
+	public Employee insertEmployee(Employee employee) {
 		PreparedStatement ps = null;
-		if (ConnectDatabase.open()) {
+		if (ConnectDatabase.getInstance().open()) {
             try {
-                ps = ConnectDatabase.cnn.prepareStatement("insert into employee values (?,?,?,?,?,?,?,?,?)");
+                ps = ConnectDatabase.getInstance().getCnn().prepareStatement("insert into employee values (?,?,?,?,?,?,?,?,?,?)");
                 ps.setString(1, String.valueOf(employee.getIdCustomer()));
                 ps.setString(2, employee.getNameCustomer());
                 ps.setString(3, String.valueOf(employee.getOld()));
@@ -25,6 +37,7 @@ public class EmployeeDAO {
                 ps.setString(7, employee.getIdentityNumber());
                 ps.setString(8, String.valueOf(employee.getPassword()));
                 ps.setString(9, String.valueOf(employee.getRole()));
+                ps.setString(10,"1");
                 int row = ps.executeUpdate();
                 if (row < 1) {
                     employee = null;
@@ -33,16 +46,16 @@ public class EmployeeDAO {
                 System.out.println("Insert beverage fail!");
                 employee = null;
             } finally {
-            	ConnectDatabase.close(ps);
+            	ConnectDatabase.getInstance().close(ps);
             }
         }
         return employee;
 	}
-	public static Employee updateEmployee(Employee employee) {
+	public Employee updateEmployee(Employee employee) {
 		PreparedStatement ps = null;
-		if (ConnectDatabase.open()) {
+		if (ConnectDatabase.getInstance().open()) {
             try {
-                ps = ConnectDatabase.cnn.prepareStatement("update employee "
+                ps = ConnectDatabase.getInstance().getCnn().prepareStatement("update employee "
                 		+ "set name = ?,"
                 		+ "old = ?,"
                 		+ "address = ?,"
@@ -70,32 +83,33 @@ public class EmployeeDAO {
                 System.out.println("Update enployee fail!" + ex.toString());
                 employee = null;
             } finally {
-            	ConnectDatabase.close(ps);
+            	ConnectDatabase.getInstance().close(ps);
             }
         }
         return employee;
 	}
-	public static void deleteEmployee(int idEmployee) {
+	public void deleteEmployee(int idEmployee) {
 		PreparedStatement ps = null;
 		try {
-            if (ConnectDatabase.open()) {
-                ps = ConnectDatabase.cnn.prepareStatement("delete from employee where idEmployee = ?");
+            if (ConnectDatabase.getInstance().open()) {
+                ps = ConnectDatabase.getInstance().getCnn().prepareStatement("update employee set status = 0 where idEmployee = ?");
                 ps.setString(1, String.valueOf(idEmployee));
                 ps.executeUpdate();
-                ConnectDatabase.close();
+                ConnectDatabase.getInstance().close();
             }
         } catch (SQLException e) {
             System.out.println("Delete employee fail!");
+            e.printStackTrace();
         }
 	}
-	public static List<Employee> getAllEmployees(){
+	public List<Employee> getAllEmployees(){
 		Employee employee = null;
 		List<Employee> list = null;
 		PreparedStatement ps = null;
         ResultSet rs = null;
-        if(ConnectDatabase.open()) {
+        if(ConnectDatabase.getInstance().open()) {
         	try {
-        		ps = ConnectDatabase.cnn.prepareStatement("select * from employee");
+        		ps = ConnectDatabase.getInstance().getCnn().prepareStatement("select * from employee where status = 1");
         		rs = ps.executeQuery();
         		list = new ArrayList<Employee>();
         		while(rs.next()) {
@@ -104,40 +118,33 @@ public class EmployeeDAO {
         		}
         	}catch (SQLException ex) {
         		System.out.println("Get beverage fail!");
+        		ex.printStackTrace();
             } finally {
-            	ConnectDatabase.close(ps, rs);
+            	ConnectDatabase.getInstance().close(ps, rs);
             }
         }
 		return list;
 	}
-	public static int nextId() {
+	public int nextId() {
 		int value = -1;
 		PreparedStatement ps = null;
 		ResultSet rs = null;
-		if(ConnectDatabase.open()) {
+		if(ConnectDatabase.getInstance().open()) {
         	try {
-        		ps = ConnectDatabase.cnn.prepareStatement("SET @@SESSION.information_schema_stats_expiry = 0 ");
+        		ps = ConnectDatabase.getInstance().getCnn().prepareStatement("SET @@SESSION.information_schema_stats_expiry = 0 ");
         		ps.executeQuery();
-        		ps = ConnectDatabase.cnn.prepareStatement("select AUTO_INCREMENT FROM information_schema.tables WHERE table_name = 'employee' AND table_schema = 'qlsb'");
+        		ps = ConnectDatabase.getInstance().getCnn().prepareStatement("select AUTO_INCREMENT FROM information_schema.tables WHERE table_name = 'employee' AND table_schema = 'qlsb'");
         		rs = ps.executeQuery();
         		while(rs.next()) {
         			value = rs.getInt(1);
         		}
         	}catch (SQLException ex) {
         		System.out.println("Get beverage fail!");
+        		ex.printStackTrace();
             } finally {
-            	ConnectDatabase.close(ps, rs);
+            	ConnectDatabase.getInstance().close(ps, rs);
             }
         }
 		return value;
-	}
-	public static List<Employee> search(String name){
-		List<Employee> list = null;
-		return list;
-	}
-	public static void main(String[] args) {
-		EmployeeDAO eD  = new EmployeeDAO();
-		int i = eD.nextId();
-		System.out.println(i);
 	}
 }

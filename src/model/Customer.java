@@ -16,7 +16,7 @@ public class Customer {
 	}
 	@Override
 	public String toString() {
-		return "Customer [idCustomer=" + idCustomer + ", nameCustomer=" + nameCustomer + "]";
+		return nameCustomer +" "+ phoneCustomer;
 	}
 	public int getIdCustomer() {
 		return idCustomer;

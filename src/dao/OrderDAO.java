@@ -5,6 +5,7 @@ package dao;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -14,71 +15,124 @@ import model.Order;
 
 public class OrderDAO {
 	
-	public static Order insertOrder(Order order) {
+	private static OrderDAO instance; 
+	private OrderDAO() {
+	}
+	public static OrderDAO getInstance() {
+		if(instance == null) {
+			instance = new OrderDAO();
+		}
+		return instance;
+	}
+	
+	public Order insertOrder(Order order) {
 		PreparedStatement ps = null;
-		if (ConnectDatabase.open()) {
+		if (ConnectDatabase.getInstance().open()) {
             try {
-                ps = ConnectDatabase.cnn.prepareStatement("insert into ordered values (?,?,?,?,?)");
+                ps = ConnectDatabase.getInstance().getCnn().prepareStatement("insert into ordered values (?,?,?,?,?)");
                 ps.setString(1, String.valueOf(order.getIdOrder()));
                 ps.setString(2, String.valueOf(order.getIdCateYard_Time()));
                 ps.setString(3, String.valueOf(order.getIdYard()));
-                ps.setString(4, String.valueOf(order.getDate()));
+                ps.setString(4, new SimpleDateFormat("yyyy-MM-dd").format(order.getDate()));
                 ps.setString(5, String.valueOf(order.getIdCustomer()));
                 int row = ps.executeUpdate();
                 if (row < 1) {
                     order = null;
                 }
             } catch (SQLException ex) {
+            	ex.printStackTrace();
                 System.out.println("Insert order fail!");
                 order = null;
             } finally {
-            	ConnectDatabase.close(ps);
+            	ConnectDatabase.getInstance().close(ps);
             }
         }
 		return order;
 	}
 	
-	public static void deleteOrder(int idOrder) {
+	public void deleteOrder(int idOrder) {
 		PreparedStatement ps = null;
 		try {
-			if(ConnectDatabase.open()) {
-				ps = ConnectDatabase.cnn.prepareStatement("delete from ordered where idOrdered = ?");
+			if(ConnectDatabase.getInstance().open()) {
+				ps = ConnectDatabase.getInstance().getCnn().prepareStatement("delete from ordered where idOrdered = ?");
 				ps.setString(1, String.valueOf(idOrder));
 				ps.executeUpdate();
-				ConnectDatabase.close();
+				ConnectDatabase.getInstance().close();
 			}
 		}catch(SQLException e) {
-			System.out.println("Delete fail!"+ e.toString());
+			e.printStackTrace();
+			System.out.println("Delete fail!");
 		}
 	}
 	
-	public static List<Order> getOrderByDateTime(Date date,int idTime){
+	public List<Order> getOrderByDateTime(Date date, int idTime){
 		Order order = null;
 		List<Order> list = null;
 		PreparedStatement ps = null;
         ResultSet rs = null;
-		if(ConnectDatabase.open()) {
+		if(ConnectDatabase.getInstance().open()) {
         	try {
-        		ps = ConnectDatabase.cnn.prepareStatement("select * from ordered");
+        		ps = ConnectDatabase.getInstance().getCnn().prepareStatement("select * from ordered inner join qlsb.price on ordered.idTime_CateYard = price.idTime_CateYard inner join qlsb.time on price.idTime = time.idTime where ordered.date = ? and time.idTime = ?");
+        		ps.setString(1, new SimpleDateFormat("yyyy-MM-dd").format(date));
+        		ps.setString(2,String.valueOf(idTime));
         		rs = ps.executeQuery();
         		list = new ArrayList<Order>();
         		while(rs.next()) {
         			order = new Order(rs.getInt(1),rs.getInt(2),rs.getInt(3),rs.getDate(4),rs.getInt(5));
-        			if(order.getDate().compareTo(date) == 0 && order.getIdCateYard_Time() == idTime) {
-        				list.add(order);
-        			}
-        				
+        			list.add(order);
         		}
         	}catch (SQLException ex) {
+        		ex.printStackTrace();
         		System.out.println("Get order fail!");
             } finally {
-            	ConnectDatabase.close(ps, rs);
+            	ConnectDatabase.getInstance().close(ps, rs);
             }
         }
 		return list;
 	}
-	public static void main(String[] args) {
-		
+	public int NextID() {
+		int value = -1;
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+		if(ConnectDatabase.getInstance().open()) {
+        	try {
+        		ps = ConnectDatabase.getInstance().getCnn().prepareStatement("SET @@SESSION.information_schema_stats_expiry = 0 ");
+        		ps.executeQuery();
+        		ps = ConnectDatabase.getInstance().getCnn().prepareStatement("select AUTO_INCREMENT FROM information_schema.tables WHERE table_name = 'ordered' AND table_schema = 'qlsb'");
+        		rs = ps.executeQuery();
+        		while(rs.next()) {
+        			value = rs.getInt(1);
+        		}
+        	}catch (SQLException ex) {
+        		
+        		System.out.println("Get beverage fail!");
+            } finally {
+            	ConnectDatabase.getInstance().close(ps, rs);
+            }
+        }
+		return value;
 	}
-
+	public List<Order> getAllOrder(){
+		Order Order = null;
+		List<Order> list = null;
+		PreparedStatement ps = null;
+        ResultSet rs = null;
+        if(ConnectDatabase.getInstance().open()) {
+        	try {
+        		ps = ConnectDatabase.getInstance().getCnn().prepareStatement("select * from ordered");
+        		rs = ps.executeQuery();
+        		list = new ArrayList<Order>();
+        		while(rs.next()) {
+        			Order = new Order(rs.getInt(1),rs.getInt(2), rs.getInt(3), rs.getDate(4), rs.getInt(5));
+        			list.add(Order);
+        		}
+        	}catch (SQLException ex) {
+        		System.out.println("Get Order fail!" + ex);
+        		ex.printStackTrace();
+            } finally {
+            	ConnectDatabase.getInstance().close(ps, rs);
+            }
+        }
+		return list;
+	}
 }

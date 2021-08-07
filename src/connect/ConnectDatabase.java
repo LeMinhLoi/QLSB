@@ -10,14 +10,24 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class ConnectDatabase {
-	public static String driver = "com.mysql.cj.jdbc.Driver";
-    public static String url = "jdbc:mysql://localhost:3306/qlsb?allowMultiQueries=true";
-    public static String user = "root";
-    public static String pass = "789456123";
+	private String driver = "com.mysql.cj.jdbc.Driver";
+    private String url = "jdbc:mysql://localhost:3306/qlsb?allowMultiQueries=true";
+    private String user = "root";
+    private String pass = "789456123";
+    private Connection cnn;
     
-    public static Connection cnn;
-     
-    public static boolean open() {
+    private static ConnectDatabase instance;
+    
+    private ConnectDatabase(){    	
+    }
+    public static ConnectDatabase getInstance() {
+    	if(instance == null) {
+    		instance = new ConnectDatabase();
+    	}
+    	return instance;
+    }
+    
+    public boolean open() {
         try {
             if (cnn == null || cnn.isClosed()) {
                 Class.forName(driver);
@@ -31,11 +41,7 @@ public class ConnectDatabase {
         }
         return false;
     }
- 
-    public ConnectDatabase() {
-    }
-
-    public static void close() {
+    public void close() {
         try {
             if (cnn != null) {
                 cnn.close();
@@ -46,7 +52,7 @@ public class ConnectDatabase {
         
     }
     
-    public static void close(PreparedStatement ps){
+    public void close(PreparedStatement ps){
         try {
             if (ps !=null) {
             ps.close();
@@ -56,7 +62,7 @@ public class ConnectDatabase {
         }
         close();
     }
-    public static void close(Statement ps){
+    public void close(Statement ps){
         try {
             if (ps !=null) {
             ps.close();
@@ -66,7 +72,7 @@ public class ConnectDatabase {
         }
         close();
     }
-    public static void close(Statement ps, ResultSet rs){
+    public void close(Statement ps, ResultSet rs){
         try {
             if (rs !=null) {
             rs.close();
@@ -76,4 +82,7 @@ public class ConnectDatabase {
         }
         close(ps);
     }
+	public Connection getCnn() {
+		return cnn;
+	}  
 }
