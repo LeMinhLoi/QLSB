@@ -3,7 +3,7 @@ package service;
 import java.util.List;
 
 import dao.EmployeeDAO;
-import model.Employee;
+import entity.Employee;
 
 public class EmployeeService {
 	
@@ -30,25 +30,24 @@ public class EmployeeService {
 	}
 	public Object[][] showEmployees(){
 		listEmployee = EmployeeDAO.getInstance().getAllEmployees();
-		Object[][] result = new Object[listEmployee.size()][10];
+		Object[][] result = new Object[listEmployee.size()][9];
 		for(int i = 0 ; i < listEmployee.size() ; i++) {
-			result[i][0] = i + 1;
-			result[i][1] = listEmployee.get(i).getIdCustomer();
-			result[i][2] = listEmployee.get(i).getNameCustomer().toString();
-			result[i][3] = listEmployee.get(i).getOld();
+			result[i][0] = listEmployee.get(i).getIdCustomer();
+			result[i][1] = listEmployee.get(i).getNameCustomer().toString();
+			result[i][2] = listEmployee.get(i).getOld();
 			if(listEmployee.get(i).getGender() == 1) {
-				result[i][4] = "Nam";
+				result[i][3] = "Nam";
 			}else {
-				result[i][4] = "Nữ";
+				result[i][3] = "Nữ";
 			}
-			result[i][5] = listEmployee.get(i).getAddress().toString();
-			result[i][6] = listEmployee.get(i).getPhoneCustomer().toString();
-			result[i][7] = listEmployee.get(i).getIdentityNumber().toString();
-			result[i][8] = listEmployee.get(i).getPassword().toString();
+			result[i][4] = listEmployee.get(i).getAddress().toString();
+			result[i][5] = listEmployee.get(i).getPhoneCustomer().toString();
+			result[i][6] = listEmployee.get(i).getIdentityNumber().toString();
+			result[i][7] = listEmployee.get(i).getPassword().toString();
 			if(listEmployee.get(i).getRole() == 1) {
-				result[i][9] = "Admin";
+				result[i][8] = "Admin";
 			}else {
-				result[i][9] = "Nhân viên";
+				result[i][8] = "Nhân viên";
 			}
 		}
 		return result;

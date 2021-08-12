@@ -1,4 +1,4 @@
-package model;
+package entity;
 
 public class Time {
 	private int idTime;

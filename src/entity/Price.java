@@ -1,4 +1,4 @@
-package model;
+package entity;
 
 public class Price {
 	private int idCateYard_Time;

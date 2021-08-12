@@ -7,7 +7,7 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
-import model.Employee;
+import entity.Employee;
 import service.EmployeeService;
 
 import javax.swing.JTextField;

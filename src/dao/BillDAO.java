@@ -3,12 +3,14 @@ package dao;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Time;
 import java.sql.Types;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
 import connect.ConnectDatabase;
-import model.Bill;
+import entity.Bill;
 
 public class BillDAO {
 	
@@ -62,7 +64,7 @@ public class BillDAO {
         		rs = ps.executeQuery();
         		list = new ArrayList<Bill>();
         		while(rs.next()) {
-        			Bill = new Bill(rs.getInt(1),rs.getDate(2),rs.getTime(3),rs.getInt(4),rs.getInt(5),rs.getInt(6));
+        			Bill = new Bill(rs.getInt(1),rs.getDate(2),Time.valueOf(rs.getString(3)),rs.getInt(4),rs.getInt(5),rs.getInt(6));
         			list.add(Bill);
         		}
         	}catch (SQLException ex) {
@@ -145,20 +147,20 @@ public class BillDAO {
 		ResultSet rs = null;
 		if(ConnectDatabase.getInstance().open()) {
         	try {
-        		ps = ConnectDatabase.getInstance().getCnn().prepareStatement("SET @@SESSION.information_schema_stats_expiry = 0 ");
-        		ps.executeQuery();
-        		ps = ConnectDatabase.getInstance().getCnn().prepareStatement("select AUTO_INCREMENT FROM information_schema.tables WHERE table_name = 'bill' AND table_schema = 'qlsb'");
+        		ps = ConnectDatabase.getInstance().getCnn().prepareStatement("select MAX(idBill) from qlsb.bill");
         		rs = ps.executeQuery();
-        		while(rs.next()) {
+        		if(rs.next()) {
         			value = rs.getInt(1);
+        		}else {
+        			value = 0;
         		}
         	}catch (SQLException ex) {
-        		System.out.println("Get bill fail!");
+        		System.out.println("Get next id bill fail!");
         		ex.printStackTrace();
             } finally {
             	ConnectDatabase.getInstance().close(ps, rs);
             }
         }
-		return value ;
+		return value + 1 ;
 	}
 }

@@ -3,7 +3,7 @@ package service;
 import java.util.List;
 
 import dao.CustomerDAO;
-import model.Customer;
+import entity.Customer;
 
 public class CustomerService {
 
@@ -29,12 +29,11 @@ public class CustomerService {
 	}
 	public Object[][] showCustomers(){
 		listCustomer = CustomerDAO.getInstance().getAllCustomers();
-		Object[][] result = new Object[listCustomer.size()][10];
+		Object[][] result = new Object[listCustomer.size()][3];
 		for(int i = 0 ; i < listCustomer.size() ; i++) {
-			result[i][0] = i + 1;
-			result[i][1] = listCustomer.get(i).getIdCustomer();
-			result[i][2] = listCustomer.get(i).getNameCustomer().toString();
-			result[i][3] = listCustomer.get(i).getPhoneCustomer().toString();
+			result[i][0] = listCustomer.get(i).getIdCustomer();
+			result[i][1] = listCustomer.get(i).getNameCustomer().toString();
+			result[i][2] = listCustomer.get(i).getPhoneCustomer().toString();
 		}
 		return result;
 	}	

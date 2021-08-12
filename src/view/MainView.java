@@ -1,13 +1,12 @@
 package view;
 
-import java.awt.BorderLayout;
 import java.awt.EventQueue;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
-import model.other.CategoryPanel;
+import utility.CategoryPanel;
 import utility.ChangeColor;
 
 import java.awt.Color;

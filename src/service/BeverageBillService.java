@@ -3,9 +3,9 @@ package service;
 import java.util.*;
 
 import dao.BeverageBillDAO;
-import model.Beverage;
-import model.BeverageBill;
 import dao.BeverageDAO;
+import entity.Beverage;
+import entity.BeverageBill;
 
 public class BeverageBillService {
 	private ArrayList<BeverageBill> listBeverageBill = null;
@@ -55,9 +55,16 @@ public class BeverageBillService {
 			}
 		if(k) l.add(b);
 	}
-	
+	public  int demID(List<BeverageBill> l, int ID) {
+		int dem = 0;
+		for(int i = 0 ; i < l.size() ; i++) {
+			if(ID == l.get(i).getIdBeveBill())
+				dem++;
+		}
+		return dem;
+	}
 	public Object[][] showBeverageBills(int ID, List<BeverageBill> l){
-		Object[][] result = new Object[l.size()][10];
+		Object[][] result = new Object[demID(l, ID)][10];
 		int dem = 0;
 		for(int i = 0 ; i < l.size() ; i++) {
 			if(ID == l.get(i).getIdBeveBill())

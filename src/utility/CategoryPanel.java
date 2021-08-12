@@ -1,4 +1,4 @@
-package model.other;
+package utility;
 
 import javax.swing.JLabel;
 import javax.swing.JPanel;

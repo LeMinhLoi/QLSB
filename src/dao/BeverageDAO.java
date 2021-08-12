@@ -7,8 +7,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import connect.ConnectDatabase;
-import model.Beverage;
-import model.BeverageBill;
+import entity.Beverage;
+import entity.BeverageBill;
 
 public class BeverageDAO {
 	
@@ -135,19 +135,20 @@ public class BeverageDAO {
 		ResultSet rs = null;
 		if(ConnectDatabase.getInstance().open()) {
         	try {
-        		ps = ConnectDatabase.getInstance().getCnn().prepareStatement("SET @@SESSION.information_schema_stats_expiry = 0 ");
-        		ps.executeQuery();
-        		ps = ConnectDatabase.getInstance().getCnn().prepareStatement("select AUTO_INCREMENT FROM information_schema.tables WHERE table_name = 'beverage' AND table_schema = 'qlsb'");
+        		ps = ConnectDatabase.getInstance().getCnn().prepareStatement("select MAX(idBeverage) from qlsb.beverage");
         		rs = ps.executeQuery();
-        		while(rs.next()) {
+        		if(rs.next()) {
         			value = rs.getInt(1);
+        		}else {
+        			value = 0;
         		}
         	}catch (SQLException ex) {
-        		System.out.println("Get beverage fail!");
+        		System.out.println("Get next id beverage fail!");
+        		ex.printStackTrace();
             } finally {
             	ConnectDatabase.getInstance().close(ps, rs);
             }
         }
-		return value;
+		return value + 1 ;
 	}
 }

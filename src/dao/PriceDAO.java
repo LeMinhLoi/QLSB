@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import connect.ConnectDatabase;
-import model.Price;
+import entity.Price;
 
 public class PriceDAO {
 	

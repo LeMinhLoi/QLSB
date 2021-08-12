@@ -3,7 +3,7 @@ package service;
 import java.util.List;
 
 import dao.CateYardDAO;
-import model.CateYard;
+import entity.CateYard;
 
 public class CateYardService {
 

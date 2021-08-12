@@ -7,9 +7,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import connect.ConnectDatabase;
-import model.Beverage;
-import model.Customer;
-import model.Employee;
+import entity.Beverage;
+import entity.Customer;
+import entity.Employee;
 
 public class CustomerDAO {
 
@@ -92,20 +92,21 @@ public class CustomerDAO {
 		ResultSet rs = null;
 		if(ConnectDatabase.getInstance().open()) {
         	try {
-        		ps = ConnectDatabase.getInstance().getCnn().prepareStatement("SET @@SESSION.information_schema_stats_expiry = 0 ");
-        		ps.executeQuery();
-        		ps = ConnectDatabase.getInstance().getCnn().prepareStatement("select AUTO_INCREMENT FROM information_schema.tables WHERE table_name = 'customer' AND table_schema = 'qlsb'");
+        		ps = ConnectDatabase.getInstance().getCnn().prepareStatement("select MAX(idCustomer) from qlsb.customer");
         		rs = ps.executeQuery();
-        		while(rs.next()) {
+        		if(rs.next()) {
         			value = rs.getInt(1);
+        		}else {
+        			value = 0;
         		}
         	}catch (SQLException ex) {
         		System.out.println("Get next id customer fail!");
+        		ex.printStackTrace();
             } finally {
             	ConnectDatabase.getInstance().close(ps, rs);
             }
         }
-		return value;
+		return value + 1 ;
 	}
 	public Customer searchPhone(String phone){
 		Customer customer = null;

@@ -8,6 +8,7 @@ import java.awt.event.ActionListener;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -118,7 +119,9 @@ public class JPanelBeverage extends JPanel implements ActionListener{
 		jlbSearch.setBounds(519, 30, 59, 14);
 		add(jlbSearch);
 	}
-
+	JPanelBeverage getThis() {
+		return this;
+	}
 	public void createFrame(int ID) {
 
 		JFrameAddvsEditBeverage addvsEditBeverage = new JFrameAddvsEditBeverage(ID, this);
@@ -128,23 +131,31 @@ public class JPanelBeverage extends JPanel implements ActionListener{
 	public void actionPerformed(ActionEvent e) {
 		// TODO Auto-generated method stub
 		if (e.getActionCommand().equals("Xóa")) {
-			int getID = Integer.parseInt(jtbBeverage.getModel().getValueAt(jtbBeverage.getSelectedRow(), 1).toString());
-			BeverageService.getInstance().deleteBeverage(getID);
-			showBeverage("");
+			if(jtbBeverage.getSelectedRow() == -1) {
+				JOptionPane.showMessageDialog(getThis(), "Bạn chưa chọn hàng để xoá", "Error",
+						JOptionPane.ERROR_MESSAGE);
+			}else {
+				int getID = Integer.parseInt(jtbBeverage.getModel().getValueAt(jtbBeverage.getSelectedRow(), 0).toString());
+				BeverageService.getInstance().deleteBeverage(getID);
+				showBeverage("");
+			}	
 		} else if (e.getActionCommand().equals("Thêm")) {
 			createFrame(0);
 		} else if (e.getActionCommand().equals("Sửa")) {
-			createFrame(
-					Integer.parseInt(jtbBeverage.getModel().getValueAt(jtbBeverage.getSelectedRow(), 1).toString()));
+			if(jtbBeverage.getSelectedRow() == -1) {
+				JOptionPane.showMessageDialog(getThis(), "Bạn chưa chọn hàng để sửa dữ liệu", "Error",
+						JOptionPane.ERROR_MESSAGE);
+			}else {
+				createFrame(
+						Integer.parseInt(jtbBeverage.getModel().getValueAt(jtbBeverage.getSelectedRow(), 0).toString()));
+			}
 		}
-
 	}
 		
 	public void showBeverage(String name) {
 		Object[][] data = BeverageService.getInstance().showBeverages(name);
-		String col[] = {"STT", "ID", "Name", "Measure", "Origin Price", "Price", "Mount"};
+		String col[] = {"ID Beverage", "Name", "Measure", "Origin Price", "Price", "Mount"};
 		DefaultTableModel model = (DefaultTableModel) jtbBeverage.getModel();
         model.setDataVector(data, col);
 	}
-
 }

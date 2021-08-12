@@ -3,7 +3,7 @@ package service;
 import java.util.List;
 
 import dao.TimeDAO;
-import model.Time;
+import entity.Time;
 
 public class TimeService {
 	

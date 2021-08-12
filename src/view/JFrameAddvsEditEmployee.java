@@ -1,15 +1,11 @@
-	package view;
+package view;
 
-import java.awt.BorderLayout;
-import java.awt.EventQueue;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
-import javax.swing.table.DefaultTableModel;
 
-//import controller.EmployeeController;
-import model.Employee;
+import entity.Employee;
 import service.EmployeeService;
 import utility.RadioButton;
 
@@ -23,7 +19,6 @@ import java.awt.event.ActionListener;
 
 import javax.swing.JRadioButton;
 import javax.swing.JButton;
-import javax.swing.JDialog;
 
 public class JFrameAddvsEditEmployee extends JFrame {
 	private JPanelEmployee jpnEmployee;
@@ -48,6 +43,7 @@ public class JFrameAddvsEditEmployee extends JFrame {
 	 */
 	public JFrameAddvsEditEmployee(Employee employee, JPanelEmployee jpnEmployee) {
 		initComponents();
+		setTitle("Xem/Chỉnh sửa thông tin nhân viên");
 		tfID.setText(String.valueOf(employee.getIdCustomer()));
 		tfAddress.setText(employee.getAddress());
 		tfName.setText(employee.getNameCustomer());
@@ -78,10 +74,14 @@ public class JFrameAddvsEditEmployee extends JFrame {
 	}
 	public JFrameAddvsEditEmployee(int idEmployee, JPanelEmployee jpnEmployee) {
 		initComponents();
+		setTitle("Thêm mới một nhân viên");
 		tfID.setText(String.valueOf(idEmployee));
 		
 		RadioButton radioButtonController1 = new RadioButton(rdNam, rdNu);
 		RadioButton radioButtonController2 = new RadioButton(rdAdmin, rdNhanvien);
+		
+		rdNam.setSelected(true);
+		rdNhanvien.setSelected(true);
 		
 		this.jpnEmployee = jpnEmployee;
 		
@@ -217,50 +217,101 @@ public class JFrameAddvsEditEmployee extends JFrame {
 			// TODO Auto-generated method stub
 			if(e.getActionCommand().equals("OK")) {//nếu nhấn vào nút okay thì ...
 				if(EmployeeService.getInstance().checkIDEmployee(Integer.parseInt(tfID.getText())) != null) {//kiểm tra xem có mã tồn tại chưa, nếu có thì thực hiện update
-					Employee employee = new Employee();
-					employee.setIdCustomer(Integer.parseInt(tfID.getText()));
-					employee.setNameCustomer(tfName.getText());
-					employee.setAddress(tfAddress.getText());
-					employee.setOld(Integer.parseInt(tfOld.getText()));
-					employee.setIdentityNumber(tfIdentity.getText());
-					employee.setPassword(tfPass.getText());
-					employee.setPhoneCustomer(tfPhone.getText());
-					if(rdNam.isSelected() == true) employee.setGender(1);
-					else employee.setGender(0);
-					if(rdAdmin.isSelected() == true) employee.setRole(1);
-					else employee.setRole(0);
-					if(EmployeeService.getInstance().updateEmployee(employee) != null) {
-						JOptionPane.showMessageDialog(get(), "Update successfully!","Alert",JOptionPane.CLOSED_OPTION);
-						jpnEmployee.showEmployee();
-					}else {
-						System.out.println("Update fail!");
-					}
-				}else {//nếu mã chưa tồn tại thì tức là thêm
-					Employee employee = new Employee();
-					employee.setIdCustomer(Integer.parseInt(tfID.getText()));
-					employee.setNameCustomer(tfName.getText());
-					employee.setAddress(tfAddress.getText());
-					employee.setOld(Integer.parseInt(tfOld.getText()));
-					employee.setIdentityNumber(tfIdentity.getText());
-					employee.setPassword(tfPass.getText());
-					employee.setPhoneCustomer(tfPhone.getText());
-					if(rdNam.isSelected() == true) employee.setGender(1);
-					else employee.setGender(0);
-					if(rdAdmin.isSelected() == true) employee.setRole(1);
-					else employee.setRole(0);
-					if(EmployeeService.getInstance().insertEmployee(employee) != null) {
-						JOptionPane.showMessageDialog(get(), "Insert successfully!","Alert",JOptionPane.CLOSED_OPTION);
-						jpnEmployee.showEmployee();
-					}else {
-						System.out.println("Insert fail!");
-					}
+					try {
+						//cố tình bắt lỗi định dạng
+						Integer.parseInt(tfOld.getText());//cố tình chuyển từ string sang int để bắt lỗi exception
+						Integer.parseInt(tfIdentity.getText());// cố tình chuyển từ string sang int để bắt lỗi exception
+						Integer.parseInt(tfPhone.getText());// cố tình chuyển từ string sang int để bắt lỗi exception
+						//
+						if(tfName.getText().equals("")||tfAddress.getText().equals("")||tfPass.getText().equals("")) {
+							JOptionPane.showMessageDialog(get(), "Nhập thiếu thông tin!", "Error",
+									JOptionPane.ERROR_MESSAGE);
+						}else {
+							Employee employee = new Employee();
+							employee.setIdCustomer(Integer.parseInt(tfID.getText()));
+							employee.setNameCustomer(tfName.getText());
+							employee.setAddress(tfAddress.getText());
+							employee.setOld(Integer.parseInt(tfOld.getText()));
+							employee.setIdentityNumber(tfIdentity.getText());
+							employee.setPassword(tfPass.getText());
+							employee.setPhoneCustomer(tfPhone.getText());
+							if(rdNam.isSelected() == true) {
+								employee.setGender(1);
+							}
+							else {
+								employee.setGender(0);
+							}
+							if(rdAdmin.isSelected() == true) { 
+								employee.setRole(1);
+							}
+							else { 
+								employee.setRole(0);
+							}
+							if(EmployeeService.getInstance().updateEmployee(employee) != null) {
+								JOptionPane.showMessageDialog(get(), "Update successfully!","Alert",JOptionPane.CLOSED_OPTION);
+								jpnEmployee.showEmployee();
+								closeFrame();//xong thì đóng, để làm gì :v
+							}else {
+								JOptionPane.showMessageDialog(get(), "Lỗi update!", "Error",
+										JOptionPane.ERROR_MESSAGE);
+								closeFrame();
+							}
+						}
+					}catch (Exception e1) {
+						// TODO: handle exception
+						JOptionPane.showMessageDialog(get(), "Có lỗi định dạng!\nVui lòng kiểm tra lại thông tin.", "Error",
+								JOptionPane.ERROR_MESSAGE);
+					}				
+				}else {//nếu mã chưa tồn tại thì tức là thực hiện chức năng thêm
+					try {
+						//cố tình bắt lỗi định dạng
+						Integer.parseInt(tfOld.getText());//cố tình chuyển từ string sang int để bắt lỗi exception
+						Integer.parseInt(tfIdentity.getText());// cố tình chuyển từ string sang int để bắt lỗi exception
+						Integer.parseInt(tfPhone.getText());// cố tình chuyển từ string sang int để bắt lỗi exception
+						//
+						if(tfName.getText().equals("")||tfAddress.getText().equals("")||tfPass.getText().equals("")) {
+							JOptionPane.showMessageDialog(get(), "Nhập thiếu thông tin!", "Error",
+									JOptionPane.ERROR_MESSAGE);
+						}else {
+							Employee employee = new Employee();
+							employee.setIdCustomer(Integer.parseInt(tfID.getText()));
+							employee.setNameCustomer(tfName.getText());
+							employee.setAddress(tfAddress.getText());
+							employee.setOld(Integer.parseInt(tfOld.getText()));
+							employee.setIdentityNumber(tfIdentity.getText());
+							employee.setPassword(tfPass.getText());
+							employee.setPhoneCustomer(tfPhone.getText());
+							if(rdNam.isSelected() == true) {
+								employee.setGender(1);
+							}
+							else {
+								employee.setGender(0);
+							}
+							if(rdAdmin.isSelected() == true) { 
+								employee.setRole(1);
+							}
+							else { 
+								employee.setRole(0);
+							}
+							if(EmployeeService.getInstance().insertEmployee(employee) != null) {
+								JOptionPane.showMessageDialog(get(), "Insert successfully!","Alert",JOptionPane.CLOSED_OPTION);
+								jpnEmployee.showEmployee();
+								closeFrame();//xong thì đóng, để làm gì :v
+							}else {
+								JOptionPane.showMessageDialog(get(), "Lỗi insert!", "Error",
+										JOptionPane.ERROR_MESSAGE);
+								closeFrame();
+							}
+						}
+					}catch (Exception e1) {
+						// TODO: handle exception
+						JOptionPane.showMessageDialog(get(), "Có lỗi định dạng!\nVui lòng kiểm tra lại thông tin.", "Error",
+								JOptionPane.ERROR_MESSAGE);
+					}							
 				}
-				closeFrame();//xong thì đóng, để làm gì :v
 			}else if(e.getActionCommand().equals("Cancel")) {//nếu bấm vào nút huỷ
 				closeFrame();
 			}
 		}
-		
 	}
-	
 }

@@ -2,7 +2,7 @@ package service;
 
 import java.util.List;
 import dao.PriceDAO;
-import model.Price;
+import entity.Price;
 
 public class PriceService {
 	
@@ -21,13 +21,12 @@ public class PriceService {
 	}
 	public Object[][] showPrice(){
 		List<Price> listPrice = getAllPrice();
-		Object[][] result = new Object[listPrice.size()][5];
+		Object[][] result = new Object[listPrice.size()][4];
 		for(int i = 0 ; i < listPrice.size() ; i++) {
-			result[i][0] = i + 1;
-			result[i][1] = listPrice.get(i).getIdCateYard_Time();
-			result[i][2] = CateYardService.getInstance().getCateYard_By_ID(listPrice.get(i).getIdCateYard()).toString() ;
-			result[i][3] = TimeService.getInstance().getTimeById(listPrice.get(i).getIdTime()).toString();
-			result[i][4] = listPrice.get(i).getPrice();
+			result[i][0] = listPrice.get(i).getIdCateYard_Time();
+			result[i][1] = CateYardService.getInstance().getCateYard_By_ID(listPrice.get(i).getIdCateYard()).toString() ;
+			result[i][2] = TimeService.getInstance().getTimeById(listPrice.get(i).getIdTime()).toString();
+			result[i][3] = listPrice.get(i).getPrice();
 		}
 		return result;
 	}	

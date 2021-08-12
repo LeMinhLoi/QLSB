@@ -17,6 +17,7 @@ import service.EmployeeService;
 import utility.SortColumnTable;
 
 import javax.swing.JTextField;
+import javax.swing.RowFilter;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
@@ -25,6 +26,8 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+
 import com.toedter.calendar.JDateChooser;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.ChangeEvent;
@@ -34,7 +37,7 @@ import javax.swing.SwingConstants;
 
 public class JPanelBill extends JPanel implements ActionListener{
 	private JTable jtbBill;
-	private JTextField txtIDEmp;
+	private JTextField txtSearch;
 	private JDateChooser dateChooser;
 	private DateFormat dformat = new SimpleDateFormat("yyyy-MM-dd");
 	private JButton btnDelbyDate;
@@ -44,7 +47,8 @@ public class JPanelBill extends JPanel implements ActionListener{
 	private JButton btnEdit;
 	private JButton btnDelete;
 	private JButton btnShowAll;
-
+	private JLabel jlbHienThiTatCa;
+	private JPanel pnlDel;
 	/**
 	 * Create the panel.
 	 */
@@ -52,12 +56,47 @@ public class JPanelBill extends JPanel implements ActionListener{
 		initComponents();
 		if(EmployeeService.getInstance().getStoreUser().getRole() == 1) {
 			showBill(0, dformat.format(dateChooser.getDate()));
+			btnDelbyDate.setVisible(true);
+			btnShowAll.setVisible(true);
+			jlbHienThiTatCa.setVisible(true);
+			pnlDel.setVisible(true);
 		}else {
 			showBill(EmployeeService.getInstance().getStoreUser().getIdCustomer(), dformat.format(dateChooser.getDate()));
+			
+			
+			btnDelbyDate.setVisible(false);
+			btnShowAll.setVisible(false);
+			jlbHienThiTatCa.setVisible(false);
+			pnlDel.setVisible(false);
 		}
 		
 		SortColumnTable sort = new SortColumnTable(jtbBill);
 		
+		txtSearch.getDocument().addDocumentListener(new DocumentListener() {
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+                String text = txtSearch.getText();
+                if (text.trim().length() == 0) {
+                	sort.getRowSorter().setRowFilter(null);
+                } else {
+                	sort.getRowSorter().setRowFilter(RowFilter.regexFilter("(?i)" + text));
+                }
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+                String text = txtSearch.getText();
+                if (text.trim().length() == 0) {
+                	sort.getRowSorter().setRowFilter(null);
+                } else {
+                	sort.getRowSorter().setRowFilter(RowFilter.regexFilter("(?i)" + text));
+                }
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+            }
+        });
 		
 	}
 	private void initComponents() {
@@ -76,7 +115,7 @@ public class JPanelBill extends JPanel implements ActionListener{
 		btnAdd.addActionListener(this);
 		panel.add(btnAdd);
 		
-		btnEdit = new JButton("Sửa");
+		btnEdit = new JButton("Sửa/Xem");
 		btnEdit.setFont(new Font("Tahoma", Font.BOLD, 15));
 		btnEdit.setForeground(Color.DARK_GRAY);
 		btnEdit.setBounds(10, 135,  173, 45);
@@ -97,6 +136,7 @@ public class JPanelBill extends JPanel implements ActionListener{
 			public void actionPerformed(ActionEvent e) {
 				BillService.getInstance().DelByDate(dformat.format(dateChoDel1.getDate())
 						, dformat.format(dateChoDel2.getDate()));
+				showBill(0, "");
 			}
 		});
 		btnDelbyDate.setFont(new Font("Tahoma", Font.BOLD, 15));
@@ -121,7 +161,7 @@ public class JPanelBill extends JPanel implements ActionListener{
 		scrollPane.setViewportView(jtbBill);
 		Date date = new Date();
 		
-		JPanel pnlDel = new JPanel();
+		pnlDel = new JPanel();
 		pnlDel.setBounds(10, 312, 185, 99);
 		panel.add(pnlDel);
 		pnlDel.setLayout(null);
@@ -150,11 +190,11 @@ public class JPanelBill extends JPanel implements ActionListener{
 		
 		
 		
-		txtIDEmp = new JTextField();
-		txtIDEmp.setFont(new Font("Tahoma", Font.PLAIN, 13));
-		txtIDEmp.setBounds(681, 44, 149, 20);
-		add(txtIDEmp);
-		txtIDEmp.setColumns(10);
+		txtSearch = new JTextField();
+		txtSearch.setFont(new Font("Tahoma", Font.PLAIN, 13));
+		txtSearch.setBounds(681, 44, 149, 20);
+		add(txtSearch);
+		txtSearch.setColumns(10);
 		
 		btnShowAll = new JButton("ShowAll");
 		btnShowAll.setBackground(new Color(102, 204, 255));
@@ -162,7 +202,7 @@ public class JPanelBill extends JPanel implements ActionListener{
 		btnShowAll.setBounds(380, 402, 89, 23);
 		add(btnShowAll);
 		
-		JLabel jlbHienThiTatCa = new JLabel("Hiển thị tất cả hoá đơn");
+		jlbHienThiTatCa = new JLabel("Hiển thị tất cả hoá đơn");
 		jlbHienThiTatCa.setHorizontalAlignment(SwingConstants.RIGHT);
 		jlbHienThiTatCa.setFont(new Font("Tahoma", Font.BOLD, 11));
 		jlbHienThiTatCa.setBounds(233, 398, 137, 31);
@@ -182,20 +222,24 @@ public class JPanelBill extends JPanel implements ActionListener{
 		dateChooser.setDate(date);
 		dateChooser.getSpinner().addChangeListener(new ChangeListener() {
 			public void stateChanged(ChangeEvent e) {
-				int i = (txtIDEmp.getText().length() < 1) ? 0 :
-					Integer.parseInt(txtIDEmp.getText());
+				int i = (txtSearch.getText().length() < 1) ? 0 :
+					Integer.parseInt(txtSearch.getText());
 				showBill(i, dformat.format(dateChooser.getDate()));
 			}
 		});
 		btnShowAll.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				int i = (txtIDEmp.getText().length() < 1) ? 0 :
-					Integer.parseInt(txtIDEmp.getText());
+				int i = (txtSearch.getText().length() < 1) ? 0 :
+					Integer.parseInt(txtSearch.getText());
 				showBill(i, "");
 			}
 		});
+		
+		
 	}
-	
+	JPanelBill getThis() {
+		return this;
+	}
 	public void createFrame(int ID) 
 	{
 		JFrameBill Frame = new JFrameBill(ID ,this);
@@ -206,27 +250,36 @@ public class JPanelBill extends JPanel implements ActionListener{
 	public void actionPerformed(ActionEvent e)
 	{
 		if(e.getActionCommand().equals("Xóa")) {
-			int getID = Integer.parseInt(jtbBill.getModel().getValueAt(jtbBill.getSelectedRow(),1).toString());
-			int i = BillService.getInstance().checkID(getID).getIdOrder();
-			BeverageBillService.getInstance().deleteBillBeveOfBill(
-			BeverageBillService.getInstance().getAllBeverageBill(getID));
-			BillService.getInstance().deleteBill(getID);
-			BillService.getInstance().DelOrder(i);
-			if(EmployeeService.getInstance().getStoreUser().getRole() == 1) {
-				showBill(0, "");
+			if(jtbBill.getSelectedRow() == -1) {
+				JOptionPane.showMessageDialog(getThis(), "Bạn chưa chọn hàng để xoá", "Error",
+						JOptionPane.ERROR_MESSAGE);
 			}else {
-				showBill(EmployeeService.getInstance().getStoreUser().getIdCustomer(), dformat.format(dateChooser.getDate()));
+				int getID = Integer.parseInt(jtbBill.getModel().getValueAt(jtbBill.getSelectedRow(),0).toString());
+				int i = BillService.getInstance().checkID(getID).getIdOrder();
+				BeverageBillService.getInstance().deleteBillBeveOfBill(
+				BeverageBillService.getInstance().getAllBeverageBill(getID));
+				BillService.getInstance().deleteBill(getID);
+				BillService.getInstance().DelOrder(i);
+				if(EmployeeService.getInstance().getStoreUser().getRole() == 1) {
+					showBill(0, "");
+				}else {
+					showBill(EmployeeService.getInstance().getStoreUser().getIdCustomer(), dformat.format(dateChooser.getDate()));
+				}
 			}
-			
 		}else if(e.getActionCommand().equals("Thêm")) {
 			createFrame(BillService.getInstance().getNextIdBill());
-		}else if(e.getActionCommand().equals("Sửa")) {
-			createFrame(Integer.parseInt(jtbBill.getModel().getValueAt(jtbBill.getSelectedRow(),1).toString()));
+		}else if(e.getActionCommand().equals("Sửa/Xem")) {
+			if(jtbBill.getSelectedRow() == -1) {
+				JOptionPane.showMessageDialog(getThis(), "Bạn chưa chọn hàng để sửa", "Error",
+						JOptionPane.ERROR_MESSAGE);
+			}else {
+				createFrame(Integer.parseInt(jtbBill.getModel().getValueAt(jtbBill.getSelectedRow(),0).toString()));
+			}		
 		}
 	}
 	public void showBill(int IDEmpl, String d) {
 		Object[][] data = BillService.getInstance().showBills(IDEmpl, d);
-		String col[] = {"STT", "ID Bill", "Create Date", "Create Time", "Total", "ID Employee", "ID Order"};
+		String col[] = {"ID Bill", "Create Date", "Create Time", "Total", "ID Employee", "ID Order"};
 		DefaultTableModel model = (DefaultTableModel) jtbBill.getModel();
         model.setDataVector(data, col);
 	}

@@ -3,7 +3,7 @@ package service;
 import java.util.List;
 
 import dao.YardDAO;
-import model.Yard;
+import entity.Yard;
 
 public class YardService {
 	

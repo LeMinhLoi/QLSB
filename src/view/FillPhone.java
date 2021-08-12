@@ -11,11 +11,12 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
-import model.Customer;
-import model.Order;
-import model.other.Button_Yard;
+import entity.Customer;
+import entity.Order;
 import service.CustomerService;
 import service.OrderService;
+import utility.Button_Yard;
+import utility.CatchError;
 
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -73,7 +74,7 @@ public class FillPhone extends JFrame {
 	
 	
 	private void initComponents() {
-		setTitle("\u0110i\u1EC1n s\u1ED1 \u0111i\u1EC7n tho\u1EA1i");
+		setTitle("Điền số điện thoại");
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		setBounds(100, 100, 324, 231);
 		contentPane = new JPanel();
@@ -115,44 +116,58 @@ public class FillPhone extends JFrame {
 		this.jlbName = jlbName;
 	}
 
-	private class ButtonFind implements ActionListener{
+	private class ButtonFind implements ActionListener {
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			// TODO Auto-generated method stub
-			Customer customer = CustomerService.getInstance().searchPhone(tfPhone.getText());
-			if(customer == null) {
-				jlbName.setText("Không tìm thấy số điện thoại");
-				int a = JOptionPane.showConfirmDialog(getFillPhone(),"Bạn có muốn thêm số điện thoại này vào?");
-				if(a == JOptionPane.YES_OPTION) {
-					int nextID = CustomerService.getInstance().getNextIdCustomer();
-					JFrameAddvsEditCustomer addvsEditCustomer = new JFrameAddvsEditCustomer(nextID,getFillPhone());
-					addvsEditCustomer.setTextFieldPhone(tfPhone.getText());
-					addvsEditCustomer.setVisible(true);
-				}else {
-					getFillPhone().dispose();
+			if(CatchError.Instance().KieuSo(tfPhone.getText(), 10) == true) {
+				Customer customer = CustomerService.getInstance().searchPhone(tfPhone.getText());
+				if (customer == null) {
+					jlbName.setText("Không tìm thấy số điện thoại");
+					int a = JOptionPane.showConfirmDialog(getFillPhone(), "Bạn có muốn thêm số điện thoại này vào?");
+					if (a == JOptionPane.YES_OPTION) {
+						int nextID = CustomerService.getInstance().getNextIdCustomer();
+						JFrameAddvsEditCustomer addvsEditCustomer = new JFrameAddvsEditCustomer(nextID, getFillPhone());
+						addvsEditCustomer.setTextFieldPhone(tfPhone.getText());
+						addvsEditCustomer.setVisible(true);
+					} else {
+						getFillPhone().dispose();
+					}
+				} else {
+					jlbName.setText(customer.getNameCustomer());
 				}
 			}else {
-				jlbName.setText(customer.getNameCustomer());
+				JOptionPane.showMessageDialog(getFillPhone(), "Nhập sai định dạng số điện thoại", "Error",
+						JOptionPane.ERROR_MESSAGE);
 			}
 		}
-		
 	}
 	private class ButtonOk implements ActionListener{
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			// TODO Auto-generated method stub
-			Order order = new Order();
-			order.setIdOrder(OrderService.getInstance().getNextID());
-			order.setIdYard(button_Yard.getIdYard());
-			order.setIdCustomer(CustomerService.getInstance().searchPhone(tfPhone.getText()).getIdCustomer());
-			order.setIdCateYard_Time(OrderService.getInstance().getPriceByTime_Yard(idTime, button_Yard.getIdYard()).getIdCateYard_Time());
-			order.setDate(date);
-			OrderService.getInstance().insertOrder(order);
-			button_Yard.getButton().setBackground(new Color(50, 205, 50));
-			button_Yard.setStatus(1);
-			getFillPhone().dispose();
+			if(tfPhone.getText().equals("")) {
+				JOptionPane.showMessageDialog(getFillPhone(), "Vui lòng nhập số điện thoại.", "Error",
+						JOptionPane.ERROR_MESSAGE);
+			}else {
+				if(jlbName.getText().equals("")) {
+					JOptionPane.showMessageDialog(getFillPhone(), "Vui lòng bấm tìm kiếm số điện thoại.", "Error",
+							JOptionPane.ERROR_MESSAGE);
+				}else {
+					Order order = new Order();
+					order.setIdOrder(OrderService.getInstance().getNextID());
+					order.setIdYard(button_Yard.getIdYard());
+					order.setIdCustomer(CustomerService.getInstance().searchPhone(tfPhone.getText()).getIdCustomer());
+					order.setIdCateYard_Time(OrderService.getInstance().getPriceByTime_Yard(idTime, button_Yard.getIdYard()).getIdCateYard_Time());
+					order.setDate(date);
+					OrderService.getInstance().insertOrder(order);
+					button_Yard.getButton().setBackground(new Color(50, 205, 50));
+					button_Yard.setStatus(1);
+					getFillPhone().dispose();
+				}
+			}
 		}
 	}
 }

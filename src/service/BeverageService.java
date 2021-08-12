@@ -5,9 +5,8 @@ import java.util.*;
 import com.mysql.cj.x.protobuf.MysqlxCrud.Collection;
 
 import dao.BeverageDAO;
+import entity.Beverage;
 import dao.BeverageDAO;
-import model.Beverage;
-import model.Beverage;
 
 public class BeverageService {
 	private List<Beverage> listBeverage = null;
@@ -58,10 +57,10 @@ public class BeverageService {
 	
 	public Beverage UpdateOrAdd(Beverage Beverage)
 	{
-		if(Check(Beverage.getIdBeverage())) 
-			return BeverageDAO.getInstance().insertBeverage(Beverage);
-		else 
+		if(Check(Beverage.getIdBeverage())) //nếu có id
 			return BeverageDAO.getInstance().updateBeverage(Beverage);
+		else 
+			return BeverageDAO.getInstance().insertBeverage(Beverage);
 	}
 	
 	public Object[][]  Sort(String name, int m)
@@ -87,18 +86,17 @@ public class BeverageService {
 	}
 	
 	public Object[][] showBeverages(String name, List<Beverage> l){
-		Object[][] result = new Object[l.size()][10];
+		Object[][] result = new Object[l.size()][6];
 		int dem = 0;
 		for(int i = 0 ; i < l.size() ; i++) {
 			if(Compare(l.get(i).getNameBeverage().toString(), name))
 			{
-				result[dem][0] = dem + 1;
-				result[dem][1] = l.get(i).getIdBeverage();
-				result[dem][2] = l.get(i).getNameBeverage().toString();
-				result[dem][3] = l.get(i).getMeasure().toString();
-				result[dem][4] = l.get(i).getOriginalPrice();
-				result[dem][5] = l.get(i).getPrice();
-				result[dem][6] = l.get(i).getMount();
+				result[dem][0] = l.get(i).getIdBeverage();
+				result[dem][1] = l.get(i).getNameBeverage().toString();
+				result[dem][2] = l.get(i).getMeasure().toString();
+				result[dem][3] = l.get(i).getOriginalPrice();
+				result[dem][4] = l.get(i).getPrice();
+				result[dem][5] = l.get(i).getMount();
 				dem++;
 			}
 		}
@@ -126,7 +124,7 @@ public class BeverageService {
 	{
 		listBeverage = BeverageDAO.getInstance().getAllBeverage();
 		for(Beverage item : listBeverage)
-			if(item.getIdBeverage() == ID) return false;
-		return true;
+			if(item.getIdBeverage() == ID) return true;
+		return false;
 	}
 }

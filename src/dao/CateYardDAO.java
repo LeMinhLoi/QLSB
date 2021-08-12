@@ -7,8 +7,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import connect.ConnectDatabase;
-import model.CateYard;
-import model.Time;
+import entity.CateYard;
+import entity.Time;
 
 public class CateYardDAO {
 	

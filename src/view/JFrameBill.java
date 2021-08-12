@@ -1,23 +1,32 @@
 package view;
 
+import java.awt.Color;
 import java.awt.EventQueue;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 
 import com.toedter.calendar.JDateChooser;
+
+import entity.Beverage;
+import entity.BeverageBill;
+import entity.Bill;
+import entity.Order;
+import entity.Yard;
+
 import javax.swing.JSpinner;
-import model.Beverage;
-import model.BeverageBill;
-import model.Bill;
-import model.Order;
+
 import service.BeverageBillService;
 import service.BeverageService;
 import service.BillService;
+import service.CustomerService;
 import service.EmployeeService;
+import service.OrderService;
+import service.YardService;
 
 import java.awt.Font;
 import javax.swing.JScrollPane;
@@ -93,6 +102,9 @@ public class JFrameBill extends JFrame implements ActionListener{
 		pnlAdd.setVisible(false);
 		txtIDEmpl.setText(String.valueOf(EmployeeService.getInstance().getStoreUser().getIdCustomer()));
 	}
+	JFrameBill getThis() {
+		return this;
+	}
 	
 	private void SetCBB()
 	{
@@ -121,7 +133,7 @@ public class JFrameBill extends JFrame implements ActionListener{
 	}
 	
 	private void initComponents() {
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		setBounds(100, 100, 717, 518);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -199,27 +211,35 @@ public class JFrameBill extends JFrame implements ActionListener{
 		btnOK = new JButton("OK");
 		btnOK.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				Bill newb = (!BillService.getInstance().Check(ID)) ? BillService.getInstance().checkID(ID) : new Bill();
-				newb.setIdBill(Integer.parseInt(txtIDBill.getText()));
-				DateFormat dformat = new SimpleDateFormat("yyyy-MM-dd");
-				newb.setCreateDate(Date.valueOf(dformat.format(dateChooser.getDate())));
-				if(BillService.getInstance().Check(ID)) newb.setCreateTime(Time.valueOf(LocalTime.now()));
-				newb.setTotal(Integer.parseInt(txtTotal.getText()));
-				newb.setIdEmployee(Integer.parseInt(txtIDEmpl.getText()));
-				if(cbbIDOrder.getSelectedItem() == "") newb.setIdOrder(0);
-				else newb.setIdOrder(((Order)cbbIDOrder.getSelectedItem()).getIdOrder());
-				BillService.getInstance().UpdateOrAdd(newb);
-				if(!lBeveBillDel.isEmpty())
-					for(BeverageBill i : lBeveBillDel)
-						BeverageBillService.getInstance().delet(i.getIdBeveBill(), i.getIdBeve());
-				for(BeverageBill w : lBeveBillAdd)
-					BeverageBillService.getInstance().Add(w);
-				
-				dispose();
-				if(EmployeeService.getInstance().getStoreUser().getRole() == 1) {
-					jPanelBill.showBill(0, jPanelBill.getDateChooser());
+				if(!txtTotal.getText().equals("0")) {
+					Bill newb = (!BillService.getInstance().Check(ID)) ? BillService.getInstance().checkID(ID) : new Bill();
+					newb.setIdBill(Integer.parseInt(txtIDBill.getText()));
+					DateFormat dformat = new SimpleDateFormat("yyyy-MM-dd");
+					newb.setCreateDate(Date.valueOf(dformat.format(dateChooser.getDate())));
+					if(BillService.getInstance().Check(ID)) newb.setCreateTime(Time.valueOf(LocalTime.now()));
+					newb.setTotal(Integer.parseInt(txtTotal.getText()));
+					newb.setIdEmployee(Integer.parseInt(txtIDEmpl.getText()));
+					if(cbbIDOrder.getSelectedItem() == "") newb.setIdOrder(0);
+					else newb.setIdOrder(((Order)cbbIDOrder.getSelectedItem()).getIdOrder());
+					BillService.getInstance().UpdateOrAdd(newb);
+					if(!lBeveBillDel.isEmpty())
+						for(BeverageBill i : lBeveBillDel)
+							if(i != null)
+								BeverageBillService.getInstance().delet(i.getIdBeveBill(), i.getIdBeve());
+					for(BeverageBill w : lBeveBillAdd)
+						BeverageBillService.getInstance().Add(w);
+					
+					dispose();
+					if(EmployeeService.getInstance().getStoreUser().getRole() == 1) {
+						jPanelBill.showBill(0, jPanelBill.getDateChooser());
+					}else {
+						jPanelBill.showBill(EmployeeService.getInstance().getStoreUser().getIdCustomer(), jPanelBill.getDateChooser());
+					}
 				}else {
-					jPanelBill.showBill(EmployeeService.getInstance().getStoreUser().getIdCustomer(), jPanelBill.getDateChooser());
+					int a = JOptionPane.showConfirmDialog(getThis(), "Bạn chưa hành động gì cả.\nBạn muốn rời khỏi không?");
+					if (a == JOptionPane.YES_OPTION) {
+						dispose();
+					}
 				}
 			}
 		});
@@ -316,12 +336,17 @@ public class JFrameBill extends JFrame implements ActionListener{
 	public void actionPerformed(ActionEvent e)
 	{
 		if(e.getActionCommand().equals("Xóa")) {
-			String name = table.getModel().getValueAt(table.getSelectedRow(),1).toString();
-			BeverageBillService.getInstance().deleteList(ID, BeverageBillService.getInstance().ReID(name), lBeveBill);
-			if(!lBeveBillAdd.isEmpty())
-				BeverageBillService.getInstance().deleteList(ID, BeverageBillService.getInstance().ReID(name), lBeveBillAdd);
-			lBeveBillDel.add(BeverageBillService.getInstance().checkID(ID, BeverageBillService.getInstance().ReID(name)));
-			showBeveBill(ID, lBeveBill);
+			if(table.getSelectedRow() == -1) {
+				JOptionPane.showMessageDialog(getThis(), "Bạn chưa chọn hàng!", "Error",
+						JOptionPane.ERROR_MESSAGE);
+			}else {
+				String name = table.getModel().getValueAt(table.getSelectedRow(),1).toString();
+				BeverageBillService.getInstance().deleteList(ID, BeverageBillService.getInstance().ReID(name), lBeveBill);
+				if(!lBeveBillAdd.isEmpty())
+					BeverageBillService.getInstance().deleteList(ID, BeverageBillService.getInstance().ReID(name), lBeveBillAdd);
+				lBeveBillDel.add(BeverageBillService.getInstance().checkID(ID, BeverageBillService.getInstance().ReID(name)));
+				showBeveBill(ID, lBeveBill);
+			}
 		}else if(e.getActionCommand().equals("Thêm")) {
 			pnlAdd.setVisible(true);;
 		}

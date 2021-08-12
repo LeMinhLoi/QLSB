@@ -7,8 +7,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import connect.ConnectDatabase;
-import model.Beverage;
-import model.Yard;
+import entity.Beverage;
+import entity.Yard;
 
 public class YardDAO {
 	private static YardDAO instance;

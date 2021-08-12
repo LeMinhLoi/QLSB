@@ -6,14 +6,14 @@ import javax.swing.JOptionPane;
 
 import com.toedter.calendar.JDateChooser;
 
-import model.Order;
-import model.Time;
-import model.Yard;
-import model.other.Button_Yard;
+import entity.Order;
+import entity.Time;
+import entity.Yard;
 import service.CustomerService;
 import service.OrderService;
 import service.TimeService;
 import service.YardService;
+import utility.Button_Yard;
 
 import javax.swing.JComboBox;
 import javax.swing.JButton;
@@ -58,6 +58,8 @@ public class JPanelOrder extends JPanel {
 		
 		listTime = TimeService.getInstance().getAllTime();
 		cbbChooseTime.addItem("Hãy chọn giờ");
+		
+		
 		for(Time item : listTime) {
 			cbbChooseTime.addItem(item);
 		}
@@ -65,7 +67,7 @@ public class JPanelOrder extends JPanel {
 		List<Yard> listYard = YardService.getInstance().getAllYard();
 		for(int i = 0 ; i < listYard.size() ; i++) {
 			if(listYard.get(i).getStatus() == 0) {
-				listButtonYard.get(i).setStatus(2);
+				listButtonYard.get(i).setStatus(2);//set trạng thái không cho đặt sân
 				listButtonYard.get(i).getButton().setBackground(new Color(255,0,0));
 			}
 		}
@@ -81,9 +83,19 @@ public class JPanelOrder extends JPanel {
 		btnSan5F.addActionListener(buttonYard);
 		btnSan7A.addActionListener(buttonYard);
 		btnSan7B.addActionListener(buttonYard);
+		
+		btnSan5A.setEnabled(false);
+		btnSan5B.setEnabled(false);
+		btnSan5C.setEnabled(false);
+		btnSan5D.setEnabled(false);
+		btnSan5E.setEnabled(false);
+		btnSan5F.setEnabled(false);
+		btnSan7A.setEnabled(false);
+		btnSan7B.setEnabled(false);
 	}
 	private void initComponents() {
 		setLayout(null);
+	
 		
 		JLabel jlbDateChooser = new JLabel("Ng\u00E0y");
 		jlbDateChooser.setFont(new Font("Tahoma", Font.BOLD, 14));
@@ -158,10 +170,12 @@ public class JPanelOrder extends JPanel {
 			if(cbbChooseTime.getSelectedIndex() == 0 || dateChooser.getDate() == null) {
 				JOptionPane.showMessageDialog(getPanel(), "Hãy đảm bảo đã chọn đủ ngày và giờ.\n");
 			}else {
+				
 				for(int i = 0 ; i < 8 ; i ++) {// reset tất cả các màu các nút sẽ là màu cam
 					if(listButtonYard.get(i).getStatus() != 2) {
 						listButtonYard.get(i).getButton().setBackground(Color.ORANGE);
 						listButtonYard.get(i).setStatus(0);// đánh dấu là chưa đặt
+						listButtonYard.get(i).getButton().setEnabled(true);
 					}
 				}
 				listOrder = OrderService.getInstance().getOrderByDate_Time(dateChooser.getDate(), ((Time)cbbChooseTime.getSelectedItem()).getIdTime());//lấy danh sách Order theo ngày và time
@@ -177,42 +191,74 @@ public class JPanelOrder extends JPanel {
 			}
 		}
 	}
-	private class ButtonYard implements ActionListener{
+
+	private class ButtonYard implements ActionListener {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			// TODO Auto-generated method stub
-			if(cbbChooseTime.getSelectedIndex() == 0 || dateChooser.getDate() == null) {
+			if (cbbChooseTime.getSelectedIndex() == 0 || dateChooser.getDate() == null) {
 				JOptionPane.showMessageDialog(getPanel(), "Hãy đảm bảo đã chọn đủ ngày và giờ.\n");
-			}else {
-				for(int i = 0 ; i < 8 ; i++) {
-					if(listButtonYard.get(i).getButton().getText().equals(e.getActionCommand())) {//sân đã được bấm
-						if(listButtonYard.get(i).getStatus() == 0) {//nếu sân vẫn chưa ai đặt thì...
-							FillPhone fillPhone = new FillPhone(listButtonYard.get(i), dateChooser.getDate(),((Time)cbbChooseTime.getSelectedItem()).getIdTime());
-							fillPhone.setVisible(true);
-						}else if(listButtonYard.get(i).getStatus() == 1){
-							int idYard = 0;
-							switch(e.getActionCommand()) {
-								case "Sân 5A": idYard = 1; break;
-								case "Sân 5B": idYard = 2; break;
-								case "Sân 5C": idYard = 3; break;
-								case "Sân 5D": idYard = 4; break;
-								case "Sân 5E": idYard = 5; break;
-								case "Sân 5F": idYard = 6; break;
-								case "Sân 7A": idYard = 7; break;
-								case "Sân 7B": idYard = 8; break;
-								default: break;
-							}
-							Order order = OrderService.getInstance().getOrderByTime_Date_Yard(((Time)cbbChooseTime.getSelectedItem()).getIdTime(),  idYard, dateChooser.getDate() );
-							int a = JOptionPane.showConfirmDialog(getPanel(),"Bạn chắc chắn muốn huỷ sân?\n"+CustomerService.getInstance().checkID(order.getIdCustomer()).toString());
-							if(a == JOptionPane.YES_OPTION) {
-								OrderService.getInstance().deleteOrder(order.getIdOrder());
-								listButtonYard.get(i).setStatus(0);
-								listButtonYard.get(i).getButton().setBackground(Color.ORANGE);
-							}
-						}else {
+			} else {
+				for (int i = 0; i < 8; i++) {
+					if (listButtonYard.get(i).getButton().getText().equals(e.getActionCommand())) {// sân đã được bấm
+						if (listButtonYard.get(i).getStatus() == 2) {// nếu sân bị vô hiệu hoá
 							JOptionPane.showMessageDialog(getPanel(), "Sân tạm thời không phục vụ.\n");
+						} else {
+							if (listButtonYard.get(i).getStatus() == 0) {// nếu sân vẫn chưa ai đặt thì...
+								FillPhone fillPhone = new FillPhone(listButtonYard.get(i), dateChooser.getDate(),
+										((Time) cbbChooseTime.getSelectedItem()).getIdTime());
+								fillPhone.setVisible(true);
+							} else if (listButtonYard.get(i).getStatus() == 1) {
+								int idYard = 0;
+								switch (e.getActionCommand()) {
+								case "Sân 5A":
+									idYard = 1;
+									break;
+								case "Sân 5B":
+									idYard = 2;
+									break;
+								case "Sân 5C":
+									idYard = 3;
+									break;
+								case "Sân 5D":
+									idYard = 4;
+									break;
+								case "Sân 5E":
+									idYard = 5;
+									break;
+								case "Sân 5F":
+									idYard = 6;
+									break;
+								case "Sân 7A":
+									idYard = 7;
+									break;
+								case "Sân 7B":
+									idYard = 8;
+									break;
+								default:
+									break;
+								}
+								Order order = OrderService.getInstance().getOrderByTime_Date_Yard(
+										((Time) cbbChooseTime.getSelectedItem()).getIdTime(), idYard,
+										dateChooser.getDate());
+								int a = JOptionPane.showConfirmDialog(getPanel(), "Bạn chắc chắn muốn huỷ sân?\n"
+										+ CustomerService.getInstance().checkID(order.getIdCustomer()).toString());
+								if (a == JOptionPane.YES_OPTION) {
+									OrderService.getInstance().deleteOrder(order.getIdOrder());
+									List<Yard> listYard = YardService.getInstance().getAllYard();
+									if(listYard.get(i).getStatus() == 0) {
+										listButtonYard.get(i).setStatus(2);//set trạng thái không cho đặt sân
+										listButtonYard.get(i).getButton().setBackground(new Color(255,0,0));
+									}else {
+										listButtonYard.get(i).setStatus(0);
+										listButtonYard.get(i).getButton().setBackground(Color.ORANGE);
+									}
+									
+								}
+							}
 						}
 					}
+
 				}
 			}
 		}

@@ -1,4 +1,4 @@
-package model.other;
+package utility;
 
 import javax.swing.JButton;
 
@@ -36,9 +36,5 @@ public class Button_Yard {
 
 	public void setStatus(int status) {
 		this.status = status;
-	}
-	
-	
-	
-	
+	}	
 }

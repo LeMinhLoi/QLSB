@@ -1,4 +1,4 @@
-package model;
+package entity;
 
 public class Yard {
 	private int idYard;

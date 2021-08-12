@@ -5,10 +5,10 @@ import java.util.*;
 import dao.BillDAO;
 import dao.OrderDAO;
 import dao.PriceDAO;
-import model.BeverageBill;
-import model.Bill;
-import model.Order;
-import model.Price;
+import entity.BeverageBill;
+import entity.Bill;
+import entity.Order;
+import entity.Price;
 
 public class BillService {
 	private List<Bill> listBill;
@@ -30,7 +30,19 @@ public class BillService {
 	
 	public void DelByDate(String date1, String date2)
 	{
-		BillDAO.getInstance().deleteBillByDate(date1, date2);
+		List<Bill> l = new BillService().getAllBill();
+		for(int i = 0 ; i < l.size(); ++i) {
+			if(l.get(i).getCreateDate().toString().compareTo(date1) > 0
+					&& l.get(i).getCreateDate().toString().compareTo(date2) < 0) {
+				int getID = l.get(i).getIdBill();
+				int k = BillService.getInstance().checkID(getID).getIdOrder();
+				BeverageBillService.getInstance().deleteBillBeveOfBill(
+				BeverageBillService.getInstance().getAllBeverageBill(getID));
+				BillService.getInstance().deleteBill(getID);
+				BillService.getInstance().DelOrder(k);
+			}
+		}
+		//BillDAO.getInstance().deleteBillByDate(date1, date2);
 	}
 	
 	public Bill UpdateOrAdd(Bill Bill)
@@ -40,24 +52,33 @@ public class BillService {
 		else 
 			return BillDAO.getInstance().updateBill(Bill);
 	}
-	
-	public static Object[][] showBills(int IDEmpl, List<Bill> l, String d){
-		Object[][] result = new Object[l.size()][10];
+	public int demTheoNgay(List<Bill> l, String d,int idEmployee) {
+		int dem = 0;
+		for(int i = 0 ; i < l.size() ; i++) {
+			if((l.get(i).getCreateDate().toString().equals(d) || d == "") && (idEmployee == l.get(i).getIdEmployee()))
+				dem++;
+		}
+		if(idEmployee == 0) {
+			return l.size();
+		}
+		return dem;
+	}
+	public Object[][] showBills(int IDEmpl, List<Bill> l, String d){
+		Object[][] result = new Object[demTheoNgay(l, d,IDEmpl)][6];
 		int dem = 0;
 		for(int i = 0 ; i < l.size() ; i++) {
 			if((IDEmpl == 0 || IDEmpl == l.get(i).getIdEmployee())
 					&& (l.get(i).getCreateDate().toString().equals(d) || d == ""))
 			{
-				result[dem][0] = dem + 1;
-				result[dem][1] = l.get(i).getIdBill();
-				result[dem][2] = l.get(i).getCreateDate().toString();
-				result[dem][3] = l.get(i).getCreateTime().toString();
-				result[dem][4] = String.valueOf(l.get(i).getTotal());
-				result[dem][5] = String.valueOf(l.get(i).getIdEmployee());
+				result[dem][0] = l.get(i).getIdBill();
+				result[dem][1] = l.get(i).getCreateDate().toString();
+				result[dem][2] = l.get(i).getCreateTime().toString();
+				result[dem][3] = String.valueOf(l.get(i).getTotal());
+				result[dem][4] = String.valueOf(l.get(i).getIdEmployee());
 				if(l.get(i).getIdOrder() == 0) {
-					result[dem][6] = "NULL";
+					result[dem][5] = "NULL";
 				}else {
-					result[dem][6] = String.valueOf(l.get(i).getIdOrder());
+					result[dem][5] = String.valueOf(l.get(i).getIdOrder());
 				}	
 				dem++;
 			}

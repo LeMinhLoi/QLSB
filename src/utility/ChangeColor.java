@@ -9,7 +9,6 @@ import java.util.List;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-import model.other.CategoryPanel;
 import view.JPanelBeverage;
 import view.JPanelBill;
 import view.JPanelCustomer;

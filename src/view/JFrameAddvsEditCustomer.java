@@ -10,8 +10,8 @@ import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.border.EmptyBorder;
 
-import model.Customer;
-import model.Employee;
+import entity.Customer;
+import entity.Employee;
 import service.CustomerService;
 import service.EmployeeService;
 //import view.JFrameAddvsEditEmployee.ButtonListener;
@@ -33,8 +33,9 @@ public class JFrameAddvsEditCustomer extends JFrame {
 	private JButton btnOk;
 	private JButton btnCancel;
 	
-	public JFrameAddvsEditCustomer(Customer customer, JPanelCustomer jpnCustomer) {//giao diện này dành cho quản lý khách hàng
+	public JFrameAddvsEditCustomer(Customer customer, JPanelCustomer jpnCustomer) {//giao diện này dành cho quản lý khách hàng, sửa thông tin khách hàng
 		initComponents();
+		setTitle("Sửa thông tin khách hàng");
 		tfID.setText(String.valueOf(customer.getIdCustomer()));
 		tfName.setText(customer.getNameCustomer());
 		tfPhone.setText(customer.getPhoneCustomer());
@@ -45,8 +46,9 @@ public class JFrameAddvsEditCustomer extends JFrame {
 		btnOk.addActionListener(buttonListener);
 		btnCancel.addActionListener(buttonListener);
 	}
-	public JFrameAddvsEditCustomer(int idCustomer, JPanelCustomer jpnCustomer) {//giao diện này dành cho quản lý khách hàng
+	public JFrameAddvsEditCustomer(int idCustomer, JPanelCustomer jpnCustomer) {//giao diện này dành cho quản lý khách hàng, thêm thông tin khách hàng
 		initComponents();
+		setTitle("Thêm mới khách hàng");
 		tfID.setText(String.valueOf(idCustomer));
 		
 		this.jpnCustomer = jpnCustomer;
@@ -55,8 +57,9 @@ public class JFrameAddvsEditCustomer extends JFrame {
 		btnOk.addActionListener(buttonListener);
 		btnCancel.addActionListener(buttonListener);
 	}
-	public JFrameAddvsEditCustomer(int idCustomer,FillPhone fillPhone) {//giao diện này dành trong chức năng đặt sân
+	public JFrameAddvsEditCustomer(int idCustomer,FillPhone fillPhone) {//giao diện này dành trong chức năng đặt sân, thêm thông tin khách hàng
 		initComponents();
+		setTitle("Thêm mới một khách hàng");
 		tfID.setText(String.valueOf(idCustomer));
 		this.fillPhone = fillPhone;
 		Action_In_FillPhone action_In_FillPhone = new Action_In_FillPhone();
@@ -108,18 +111,23 @@ public class JFrameAddvsEditCustomer extends JFrame {
 		btnCancel.setBounds(276, 219, 85, 21);
 		contentPane.add(btnCancel);
 	}
+
 	public void closeFrame() {
 		this.dispose();
 	}
+
 	public JFrameAddvsEditCustomer getFrame() {
 		return this;
 	}
+
 	public void setTextFieldPhone(String phone) {
 		tfPhone.setText(phone);
 	}
+
 	public JButton getBtnOk() {
 		return btnOk;
 	}
+
 	public void setBtnOk(JButton btnOk) {
 		this.btnOk = btnOk;
 	}
@@ -138,31 +146,70 @@ public class JFrameAddvsEditCustomer extends JFrame {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			// TODO Auto-generated method stub
-			if(e.getActionCommand().equals("OK")) {//nếu nhấn vào nút okay thì ...
-				if(CustomerService.getInstance().checkID(Integer.parseInt(tfID.getText())) != null) {//kiểm tra xem có mã tồn tại chưa, nếu có thì thực hiện update
-					Customer customer = new Customer();
-					customer.setIdCustomer(Integer.parseInt(tfID.getText()));
-					customer.setNameCustomer(tfName.getText());
-					customer.setPhoneCustomer(tfPhone.getText());
-					if(CustomerService.getInstance().updateCustomer(customer) != null) {
-						JOptionPane.showMessageDialog(getFrame(), "Update successfully!","Alert",JOptionPane.CLOSED_OPTION);
-						jpnCustomer.showCustomer();
-					}else {
-						System.out.println("Update fail!");
+			if(e.getActionCommand().equals("OK")) {//nếu nhấn vào nút ok thì ...
+				if(CustomerService.getInstance().checkID(Integer.parseInt(tfID.getText())) != null) {//kiểm tra xem có id tồn tại chưa, nếu có rồi thì thực hiện update từ id đó
+					try {
+						Integer.parseInt(tfPhone.getText());//kiểm tra exception
+						if(tfName.getText().equals("")) {
+							JOptionPane.showMessageDialog(getFrame(), "Nhập thiếu thông tin", "Error",
+									JOptionPane.ERROR_MESSAGE);
+						}else {
+							if(tfPhone.getText().length() != 10) {
+								JOptionPane.showMessageDialog(getFrame(), "Số điện thoại phải có độ dài là 10!", "Error",
+										JOptionPane.ERROR_MESSAGE);
+							}else {
+								Customer customer = new Customer();
+								customer.setIdCustomer(Integer.parseInt(tfID.getText()));
+								customer.setNameCustomer(tfName.getText());
+								customer.setPhoneCustomer(tfPhone.getText());
+								if(CustomerService.getInstance().updateCustomer(customer) != null) {
+									JOptionPane.showMessageDialog(getFrame(), "Update successfully!","Alert",JOptionPane.CLOSED_OPTION);
+									jpnCustomer.showCustomer();
+									closeFrame();//xong thì đóng, để làm gì :v
+								}else {
+									JOptionPane.showMessageDialog(getFrame(), "Lỗi update!", "Error",
+											JOptionPane.ERROR_MESSAGE);
+									closeFrame();//xong thì đóng, để làm gì :v
+								}
+							}
+						}
+					}catch (Exception e1) {
+						JOptionPane.showMessageDialog(getFrame(), "Lỗi định dạng!\nVui lòng nhập lại.", "Error",
+								JOptionPane.ERROR_MESSAGE);
 					}
+					
 				}else {//nếu mã chưa tồn tại thì tức là thêm
-					Customer customer = new Customer();
-					customer.setIdCustomer(Integer.parseInt(tfID.getText()));
-					customer.setNameCustomer(tfName.getText());
-					customer.setPhoneCustomer(tfPhone.getText());
-					if(CustomerService.getInstance().insertCustomer(customer) != null) {
-						JOptionPane.showMessageDialog(getFrame(), "Insert successfully!","Alert",JOptionPane.CLOSED_OPTION);
-						jpnCustomer.showCustomer();
-					}else {
-						System.out.println("Insert fail!");
+					try {
+						Integer.parseInt(tfPhone.getText());//kiểm tra exception
+						if(tfName.getText().equals("")) {
+							JOptionPane.showMessageDialog(getFrame(), "Nhập thiếu thông tin", "Error",
+									JOptionPane.ERROR_MESSAGE);
+						}else {
+							if(tfPhone.getText().length() != 10) {
+								JOptionPane.showMessageDialog(getFrame(), "Số điện thoại phải có độ dài là 10!", "Error",
+										JOptionPane.ERROR_MESSAGE);
+							}else {
+								Customer customer = new Customer();
+								customer.setIdCustomer(Integer.parseInt(tfID.getText()));
+								customer.setNameCustomer(tfName.getText());
+								customer.setPhoneCustomer(tfPhone.getText());
+								if(CustomerService.getInstance().insertCustomer(customer) != null) {
+									JOptionPane.showMessageDialog(getFrame(), "Insert successfully!","Alert",JOptionPane.CLOSED_OPTION);
+									jpnCustomer.showCustomer();
+									closeFrame();//xong thì đóng, để làm gì :v
+								}else {
+									JOptionPane.showMessageDialog(getFrame(), "Lỗi insert!", "Error",
+											JOptionPane.ERROR_MESSAGE);
+									closeFrame();//xong thì đóng, để làm gì :v
+								}
+							}
+						}
+					}catch (Exception e1) {
+						JOptionPane.showMessageDialog(getFrame(), "Lỗi định dạng số!\nVui lòng nhập lại.", "Error",
+								JOptionPane.ERROR_MESSAGE);
 					}
 				}
-				closeFrame();//xong thì đóng, để làm gì :v
+				
 			}else if(e.getActionCommand().equals("Cancel")) {//nếu bấm vào nút huỷ
 				closeFrame();
 			}
@@ -175,21 +222,38 @@ public class JFrameAddvsEditCustomer extends JFrame {
 		public void actionPerformed(ActionEvent e) {
 			// TODO Auto-generated method stub
 			if(e.getActionCommand().equals("OK")) {//nếu nhấn vào nút okay thì ...
-				Customer customer = new Customer();
-				customer.setIdCustomer(Integer.parseInt(tfID.getText()));
-				customer.setNameCustomer(tfName.getText());
-				customer.setPhoneCustomer(tfPhone.getText());
-				if(CustomerService.getInstance().insertCustomer(customer) != null) {
-					JOptionPane.showMessageDialog(getFrame(), "Insert successfully!","Alert",JOptionPane.CLOSED_OPTION);
-					fillPhone.getJlbName().setText(customer.getNameCustomer());
-				}else {
-					System.out.println("Insert fail!");		
-				}	
-				closeFrame();
+				try {
+					Integer.parseInt(tfPhone.getText());//kiểm tra exception
+					if(tfName.getText().equals("")) {
+						JOptionPane.showMessageDialog(getFrame(), "Nhập thiếu thông tin", "Error",
+								JOptionPane.ERROR_MESSAGE);
+					}else {
+						if(tfPhone.getText().length() != 10) {
+							JOptionPane.showMessageDialog(getFrame(), "Số điện thoại phải có độ dài là 10!", "Error",
+									JOptionPane.ERROR_MESSAGE);
+						}else {
+							Customer customer = new Customer();
+							customer.setIdCustomer(Integer.parseInt(tfID.getText()));
+							customer.setNameCustomer(tfName.getText());
+							customer.setPhoneCustomer(tfPhone.getText());
+							if(CustomerService.getInstance().insertCustomer(customer) != null) {
+								JOptionPane.showMessageDialog(getFrame(), "Insert successfully!","Alert",JOptionPane.CLOSED_OPTION);
+								fillPhone.getJlbName().setText(customer.getNameCustomer());
+								closeFrame();//thành công rồi thì đóng
+							}else {
+								JOptionPane.showMessageDialog(getFrame(), "Lỗi Insert!", "Error",
+										JOptionPane.ERROR_MESSAGE);
+								closeFrame();//xong thì đóng, để làm gì :v
+							}
+						}
+					}
+				}catch (Exception e1) {
+					JOptionPane.showMessageDialog(getFrame(), "Lỗi định dạng!\nVui lòng nhập lại.", "Error",
+							JOptionPane.ERROR_MESSAGE);
+				}
 			}else {//nếu nhấn vào nút Cancel
 				closeFrame();
 			}
-		
 		}
 	}
 }

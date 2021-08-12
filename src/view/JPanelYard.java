@@ -9,11 +9,11 @@ import javax.swing.JOptionPane;
 import javax.swing.SwingConstants;
 import javax.swing.table.DefaultTableModel;
 
-import model.Yard;
-import model.other.Button_Yard;
+import entity.Yard;
 import service.CustomerService;
 import service.PriceService;
 import service.YardService;
+import utility.Button_Yard;
 
 import java.awt.Font;
 import java.awt.event.ActionEvent;
@@ -79,49 +79,49 @@ public class JPanelYard extends JPanel {
 	}
 	public void showData() {
 		Object[][] data = PriceService.getInstance().showPrice();
-		String col[] = {"STT","ID","Category Yard","Time","Price"};
+		String col[] = {"ID","Category Yard","Time","Price"};
 		DefaultTableModel model = (DefaultTableModel) table.getModel();
         model.setDataVector(data, col);
 	}
 	private void initComponents() {
 		setLayout(null);
 		
-		btnSan5A = new JButton("S\u00E2n 5A");
+		btnSan5A = new JButton("Sân 5A");
 		btnSan5A.setBackground(new Color(50, 205, 50));
 		btnSan5A.setBounds(387, 78, 89, 61);
 		add(btnSan5A);
 		
-		btnSan5B = new JButton("S\u00E2n 5B");
+		btnSan5B = new JButton("Sân 5B");
 		btnSan5B.setBackground(new Color(50, 205, 50));
 		btnSan5B.setBounds(387, 179, 89, 61);
 		add(btnSan5B);
 		
-		btnSan5C = new JButton("S\u00E2n 5C");
+		btnSan5C = new JButton("Sân 5C");
 		btnSan5C.setBackground(new Color(50, 205, 50));
 		btnSan5C.setBounds(387, 286, 89, 61);
 		add(btnSan5C);
 		
-		btnSan5D = new JButton("S\u00E2n 5D");
+		btnSan5D = new JButton("Sân 5D");
 		btnSan5D.setBackground(new Color(50, 205, 50));
 		btnSan5D.setBounds(521, 78, 89, 61);
 		add(btnSan5D);
 		
-		btnSan5E = new JButton("S\u00E2n 5E");
+		btnSan5E = new JButton("Sân 5E");
 		btnSan5E.setBackground(new Color(50, 205, 50));
 		btnSan5E.setBounds(521, 179, 89, 61);
 		add(btnSan5E);
 		
-		btnSan5F = new JButton("S\u00E2n 5F");
+		btnSan5F = new JButton("Sân 5F");
 		btnSan5F.setBackground(new Color(50, 205, 50));
 		btnSan5F.setBounds(521, 286, 89, 61);
 		add(btnSan5F);
 		
-		btnSan7A = new JButton("S\u00E2n 7A");
+		btnSan7A = new JButton("Sân 7A");
 		btnSan7A.setBackground(new Color(50, 205, 50));
 		btnSan7A.setBounds(671, 78, 122, 91);
 		add(btnSan7A);
 		
-		btnSan7B = new JButton("S\u00E2n 7B");
+		btnSan7B = new JButton("Sân 7B");
 		btnSan7B.setBackground(new Color(50, 205, 50));
 		btnSan7B.setBounds(671, 256, 122, 91);
 		add(btnSan7B);
@@ -133,7 +133,7 @@ public class JPanelYard extends JPanel {
 		table = new JTable();
 		scrollPane.setViewportView(table);
 		
-		JLabel jlbKhungGioSan = new JLabel("Khung gi\u1EDD s\u00E2n");
+		JLabel jlbKhungGioSan = new JLabel("Khung giờ sân");
 		jlbKhungGioSan.setFont(new Font("Tahoma", Font.BOLD, 17));
 		jlbKhungGioSan.setHorizontalAlignment(SwingConstants.CENTER);
 		jlbKhungGioSan.setBounds(90, 26, 195, 41);
@@ -145,7 +145,7 @@ public class JPanelYard extends JPanel {
 //		btnAdd.setBounds(33, 367, 89, 23);
 //		add(btnAdd);
 		
-		btnEdit = new JButton("S\u1EEDa");
+		btnEdit = new JButton("Sửa");
 		btnEdit.setFont(new Font("Tahoma", Font.BOLD, 11));
 		btnEdit.setBackground(new Color(0, 191, 255));
 		btnEdit.setBounds(143, 367, 89, 23);
@@ -157,7 +157,7 @@ public class JPanelYard extends JPanel {
 //		btnDelete.setBounds(249, 367, 89, 23);
 //		add(btnDelete);
 		
-		JLabel jlbCacSan = new JLabel("C\u00E1c s\u00E2n trong khu v\u1EF1c");
+		JLabel jlbCacSan = new JLabel("Các sân trong khu vực");
 		jlbCacSan.setFont(new Font("Tahoma", Font.BOLD, 16));
 		jlbCacSan.setHorizontalAlignment(SwingConstants.CENTER);
 		jlbCacSan.setBounds(430, 26, 330, 30);
@@ -202,13 +202,18 @@ public class JPanelYard extends JPanel {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			// TODO Auto-generated method stub
-			int getID = Integer.parseInt(table.getModel().getValueAt(table.getSelectedRow(),1).toString());
-			JFrameEditPrice f = new JFrameEditPrice(getThis());
-			f.getTfID().setText(String.valueOf(getID));
-			f.getTfCateYard().setText(table.getModel().getValueAt(table.getSelectedRow(),2).toString());
-			f.getTfTime().setText(table.getModel().getValueAt(table.getSelectedRow(),3).toString());
-			f.getTfPrice().setText(table.getModel().getValueAt(table.getSelectedRow(),4).toString());
-			f.setVisible(true);
+			if(table.getSelectedRow() == -1) {
+				JOptionPane.showMessageDialog(getThis(), "Bạn chưa chọn hàng để sửa", "Error",
+						JOptionPane.ERROR_MESSAGE);
+			}else {
+				int getID = Integer.parseInt(table.getModel().getValueAt(table.getSelectedRow(),0).toString());
+				JFrameEditPrice f = new JFrameEditPrice(getThis());
+				f.getTfID().setText(String.valueOf(getID));
+				f.getTfCateYard().setText(table.getModel().getValueAt(table.getSelectedRow(),1).toString());
+				f.getTfTime().setText(table.getModel().getValueAt(table.getSelectedRow(),2).toString());
+				f.getTfPrice().setText(table.getModel().getValueAt(table.getSelectedRow(),3).toString());
+				f.setVisible(true);
+			}
 		}
 	}
 }

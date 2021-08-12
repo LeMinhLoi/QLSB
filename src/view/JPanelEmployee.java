@@ -3,23 +3,20 @@ package view;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JButton;
-import javax.swing.JComboBox;
 import javax.swing.JTextField;
 import javax.swing.RowFilter;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+
 import java.awt.Color;
 import java.awt.Font;
 import javax.swing.SwingConstants;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableModel;
-import javax.swing.table.TableRowSorter;
 
-import com.mysql.cj.protocol.x.SyncFlushDeflaterOutputStream;
-
-//import controller.EmployeeController;
-import model.Employee;
+import entity.Employee;
+import service.CustomerService;
 import service.EmployeeService;
 import utility.SortColumnTable;
 
@@ -96,21 +93,21 @@ public class JPanelEmployee extends JPanel {
 		add(panel);
 		panel.setLayout(null);
 		
-		btnDelete = new JButton("Xo\u00E1");
+		btnDelete = new JButton("Xoá");
 		btnDelete.setBackground(new Color(102, 204, 255));
 		btnDelete.setFont(new Font("Tahoma", Font.BOLD, 15));
 		btnDelete.setForeground(Color.DARK_GRAY);
 		btnDelete.setBounds(20, 208, 173, 45);
 		panel.add(btnDelete);
 		
-		btnAdd = new JButton("Th\u00EAm");
+		btnAdd = new JButton("Thêm");
 		btnAdd.setForeground(Color.DARK_GRAY);
 		btnAdd.setFont(new Font("Tahoma", Font.BOLD, 15));
 		btnAdd.setBackground(new Color(102, 204, 255));
 		btnAdd.setBounds(20, 72, 173, 45);
 		panel.add(btnAdd);
 		
-		btnEdit = new JButton("S\u1EEDa ");
+		btnEdit = new JButton("Sửa/Xem");
 		btnEdit.setForeground(Color.DARK_GRAY);
 		btnEdit.setFont(new Font("Tahoma", Font.BOLD, 15));
 		btnEdit.setBackground(new Color(102, 204, 255));
@@ -123,16 +120,20 @@ public class JPanelEmployee extends JPanel {
 		textField.setColumns(10);
 		
 		
-		JLabel jlbSearch = new JLabel("T\u00ECm ki\u1EBFm");
+		JLabel jlbSearch = new JLabel("Tìm kiếm");
 		jlbSearch.setHorizontalAlignment(SwingConstants.RIGHT);
 		jlbSearch.setBounds(519, 30, 59, 14);
 		add(jlbSearch);
 		
 		
 	}
+	JPanelEmployee getThis() {
+		return this;
+	}
+	
 	public void createFrame(boolean b) {
 		if( b == true) {
-			int getID = Integer.parseInt(jtbEmployee.getModel().getValueAt(jtbEmployee.getSelectedRow(),1).toString());
+			int getID = Integer.parseInt(jtbEmployee.getModel().getValueAt(jtbEmployee.getSelectedRow(),0).toString());
 			Employee employee = EmployeeService.getInstance().checkIDEmployee(getID);
 			JFrameAddvsEditEmployee addvsEditEmployee = new JFrameAddvsEditEmployee(employee,this);
 			addvsEditEmployee.setVisible(true);
@@ -150,16 +151,34 @@ public class JPanelEmployee extends JPanel {
 		public void actionPerformed(ActionEvent e) {
 			// TODO Auto-generated method stub
 			if(e.getActionCommand().equals("Xoá")) {//nếu nhấn vào nút xoá thì ...
-				int getID = Integer.parseInt(jtbEmployee.getModel().getValueAt(jtbEmployee.getSelectedRow(),1).toString());
-				EmployeeService.getInstance().deleteEmployee(getID);
-				showEmployee();
-				System.out.println("xoa");
+				if(jtbEmployee.getSelectedRow() == -1) {
+					JOptionPane.showMessageDialog(getThis(), "Bạn chưa chọn hàng để xoá", "Error",
+							JOptionPane.ERROR_MESSAGE);
+				}else {
+					int getID = Integer.parseInt(jtbEmployee.getModel().getValueAt(jtbEmployee.getSelectedRow(),0).toString());
+					if(getID == EmployeeService.getInstance().getStoreUser().getIdCustomer()) {
+						JOptionPane.showMessageDialog(getThis(), "Bạn không thể xoá dữ liệu của chính mình", "Error",
+								JOptionPane.ERROR_MESSAGE);
+					}else {
+						if(EmployeeService.getInstance().checkIDEmployee(getID).getRole() == 1) {
+							JOptionPane.showMessageDialog(getThis(), "Bạn không thể xoá dữ liệu của admin. Nếu muốn xoá, hãy sửa admin thành nhân viên.", "Error",
+									JOptionPane.ERROR_MESSAGE);
+						}else {
+							EmployeeService.getInstance().deleteEmployee(getID);
+							JOptionPane.showMessageDialog(getThis(),"Xoá thành công");
+							showEmployee();
+						}			
+					}				
+				}
 			}else if(e.getActionCommand().equals("Thêm")) {
 				createFrame(false);
-				System.out.println("them");
-			}else if(e.getActionCommand().equals("S\u1EEDa ")) {
-				createFrame(true);
-				System.out.println("sua");
+			}else if(e.getActionCommand().equals("Sửa/Xem")) {
+				if(jtbEmployee.getSelectedRow() == -1) {
+					JOptionPane.showMessageDialog(getThis(), "Bạn chưa chọn hàng để sửa dữ liệu", "Error",
+							JOptionPane.ERROR_MESSAGE);
+				}else {
+					createFrame(true);
+				}
 			}
 
 		}
@@ -167,7 +186,7 @@ public class JPanelEmployee extends JPanel {
 	}
 	public void showEmployee() {
 		Object[][] data = EmployeeService.getInstance().showEmployees();
-		String col[] = {"STT","ID","Name","Old","Gender","Address","Phone","IdentityNumber","Password","Role"};
+		String col[] = {"ID","Name","Old","Gender","Address","Phone","IdentityNumber","Password","Role"};
 		DefaultTableModel model = (DefaultTableModel) jtbEmployee.getModel();
         model.setDataVector(data, col);
         

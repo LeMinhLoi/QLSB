@@ -5,9 +5,9 @@ import java.util.List;
 
 import dao.OrderDAO;
 import dao.PriceDAO;
-import model.Order;
-import model.Price;
-import model.Yard;
+import entity.Order;
+import entity.Price;
+import entity.Yard;
 
 public class OrderService {
 

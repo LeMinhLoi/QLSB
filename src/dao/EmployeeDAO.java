@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import connect.ConnectDatabase;
-import model.Employee;
+import entity.Employee;
 
 public class EmployeeDAO {
 	private static EmployeeDAO instance;
@@ -131,20 +131,20 @@ public class EmployeeDAO {
 		ResultSet rs = null;
 		if(ConnectDatabase.getInstance().open()) {
         	try {
-        		ps = ConnectDatabase.getInstance().getCnn().prepareStatement("SET @@SESSION.information_schema_stats_expiry = 0 ");
-        		ps.executeQuery();
-        		ps = ConnectDatabase.getInstance().getCnn().prepareStatement("select AUTO_INCREMENT FROM information_schema.tables WHERE table_name = 'employee' AND table_schema = 'qlsb'");
+        		ps = ConnectDatabase.getInstance().getCnn().prepareStatement("select MAX(idEmployee) from qlsb.employee");
         		rs = ps.executeQuery();
-        		while(rs.next()) {
+        		if(rs.next()) {
         			value = rs.getInt(1);
+        		}else {
+        			value = 0;
         		}
         	}catch (SQLException ex) {
-        		System.out.println("Get beverage fail!");
+        		System.out.println("Get next id employee fail!");
         		ex.printStackTrace();
             } finally {
             	ConnectDatabase.getInstance().close(ps, rs);
             }
         }
-		return value;
+		return value + 1 ;
 	}
 }

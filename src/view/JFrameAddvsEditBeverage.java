@@ -9,11 +9,13 @@ import javax.swing.border.EmptyBorder;
 
 import dao.BeverageBillDAO;
 import dao.BeverageDAO;
-import model.Beverage;
+import entity.Beverage;
 import service.BeverageService;
 
 import javax.swing.JTextField;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+
 import java.awt.Font;
 import javax.swing.JButton;
 import java.awt.event.ActionListener;
@@ -53,9 +55,11 @@ public class JFrameAddvsEditBeverage extends JFrame {
 		}
 		else txtID.setText(String.valueOf(BeverageService.getInstance().getNextIdBeverage()));
 	}
-		
+	public 	JFrameAddvsEditBeverage getThis() {
+		return this;
+	}
 	private void initComponents() {
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		setBounds(100, 100, 432, 191);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -128,25 +132,6 @@ public class JFrameAddvsEditBeverage extends JFrame {
 		contentPane.add(txtMount);
 		txtMount.setColumns(10);
 		
-		JButton btnOK = new JButton("OK");
-		btnOK.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				Beverage b = new Beverage();
-				b.setIdBeverage(Integer.parseInt(txtID.getText()));
-				b.setNameBeverage(txtName.getText());
-				b.setMeasure(txtMeasure.getText());
-				b.setOriginalPrice(Integer.parseInt(txtOriginPrice.getText()));	
-				b.setPrice(Integer.parseInt(txtPrice.getText()));
-				b.setMount(Integer.parseInt(txtMount.getText()));
-				BeverageService.getInstance().UpdateOrAdd(b);
-				dispose();
-				jpnBeverage.showBeverage("");
-			}
-		});
-		btnOK.setFont(new Font("Tahoma", Font.PLAIN, 13));
-		btnOK.setBounds(94, 118, 89, 23);
-		contentPane.add(btnOK);
-		
 		JButton btnCancel = new JButton("Cancel");
 		btnCancel.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -156,5 +141,40 @@ public class JFrameAddvsEditBeverage extends JFrame {
 		btnCancel.setFont(new Font("Tahoma", Font.PLAIN, 13));
 		btnCancel.setBounds(235, 119, 89, 23);
 		contentPane.add(btnCancel);
+		JButton btnOK = new JButton("OK");
+		btnOK.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				try {
+					//bắt exception 3 dòng này, nếu 1 trong 3 dòng này bị lỗi thì thực hiện tronng khối catch
+					Integer.parseInt(txtOriginPrice.getText());
+					Integer.parseInt(txtPrice.getText());
+					Integer.parseInt(txtMount.getText());
+					
+					//nếu 3 dòng trên không lỗi thì tiếp tục thực thi
+					if(txtName.getText().equals("")||txtMeasure.getText().equals("")) {
+						JOptionPane.showMessageDialog(getThis(), "Nhập thiếu thông tin.", "Error",
+								JOptionPane.ERROR_MESSAGE);
+					}else {
+						Beverage b = new Beverage();
+						b.setIdBeverage(Integer.parseInt(txtID.getText()));
+						b.setNameBeverage(txtName.getText());
+						b.setMeasure(txtMeasure.getText());
+						b.setOriginalPrice(Integer.parseInt(txtOriginPrice.getText()));	
+						b.setPrice(Integer.parseInt(txtPrice.getText()));
+						b.setMount(Integer.parseInt(txtMount.getText()));
+						BeverageService.getInstance().UpdateOrAdd(b);
+						dispose();
+						jpnBeverage.showBeverage("");
+					}
+				}catch(NumberFormatException e1) {
+					e1.printStackTrace();
+					JOptionPane.showMessageDialog(getThis(), "Lỗi thực hiện!\nVui lòng xem lại thông tin!", "Error",
+							JOptionPane.ERROR_MESSAGE);
+				}
+			}
+		});
+		btnOK.setFont(new Font("Tahoma", Font.PLAIN, 13));
+		btnOK.setBounds(94, 118, 89, 23);
+		contentPane.add(btnOK);
 	}
 }

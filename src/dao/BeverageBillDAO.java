@@ -7,8 +7,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import connect.ConnectDatabase;
-import model.BeverageBill;
-import model.Bill;
+import entity.BeverageBill;
+import entity.Bill;
 
 public class BeverageBillDAO {
 	

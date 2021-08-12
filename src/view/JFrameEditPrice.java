@@ -8,9 +8,11 @@ import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
 import service.PriceService;
+import utility.CatchError;
 
 import javax.swing.JButton;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import java.awt.Font;
@@ -42,9 +44,16 @@ public class JFrameEditPrice extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				// TODO Auto-generated method stub
-				PriceService.getInstance().updatePrice(Integer.parseInt(tfID.getText()), Integer.parseInt(tfPrice.getText()));
-				closeFrame();
-				jPanelYard.showData();;
+				try {
+					Integer.parseInt(tfID.getText());
+					PriceService.getInstance().updatePrice(Integer.parseInt(tfID.getText()), Integer.parseInt(tfPrice.getText()));
+					closeFrame();
+					jPanelYard.showData();
+				}catch (NumberFormatException e1) {
+					// TODO: handle exception
+					JOptionPane.showMessageDialog(getThis(), "Tiền phải là chuỗi số!", "Error",
+							JOptionPane.ERROR_MESSAGE);
+				}
 			}
 		});
 		btnCancel.addActionListener(new ActionListener() {
@@ -63,7 +72,7 @@ public class JFrameEditPrice extends JFrame {
 		return this;
 	}
 	private void initComponents() {
-		setTitle("S\u1EEDa gi\u00E1 ti\u1EC1n s\u00E2n");
+		setTitle("Sửa giá tiền sân");
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		setBounds(100, 100, 450, 219);
 		contentPane = new JPanel();

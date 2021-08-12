@@ -7,8 +7,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import connect.ConnectDatabase;
-import model.Beverage;
-import model.Time;
+import entity.Beverage;
+import entity.Time;
 
 public class TimeDAO {
 	private static TimeDAO instance;
